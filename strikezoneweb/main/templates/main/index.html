@@ -5,5 +5,26 @@
 
 {% block content %}
   <h1>Главная страница</h1>
-  <p>Текст</p>
+  <p>Лента</p>
+  
+  {% if user.is_staff or user.is_superuser or user.groups.all %}
+    <div class="mb-3">
+      <a href="{% url 'news_create' %}" class="btn btn-primary">Добавить новость</a>
+    </div>
+  {% endif %}
+  
+  <div class="news-feed">
+    {% for news in news_list %}
+      <div class="news-item" style="border-bottom: 1px solid #ccc; margin-bottom: 20px; padding-bottom: 20px;">
+        <h3>{{ news.title }}</h3>
+        <p>{{ news.content|linebreaks }}</p>
+        <small style="color: #666;">
+          Автор: {{ news.author.username }} | 
+          Дата: {{ news.created_at|date:"d.m.Y H:i" }}
+        </small>
+      </div>
+    {% empty %}
+      <p>Новостей пока нет.</p>
+    {% endfor %}
+  </div>
 {% endblock %}

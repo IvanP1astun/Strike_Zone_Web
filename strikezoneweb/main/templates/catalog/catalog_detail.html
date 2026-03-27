@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{ catalog.name }}
+{% endblock %}
+
+{% block content %}
+  <div class="mb-3">
+    <a href="{% url 'catalog' %}" class="btn btn-secondary">← Назад к каталогу</a>
+  </div>
+  
+  <h1>{{ catalog.name }}</h1>
+  
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Описание</h5>
+      <p class="card-text">{{ catalog.description }}</p>
+      
+      {% if catalog.tags.all %}
+        <p class="card-text">
+          <strong>Тэги:</strong> {{ catalog.tags.all|join:", " }}
+        </p>
+      {% endif %}
+      
+      {% if catalog.guns.all %}
+        <div class="mt-3">
+          <h5>Страйбольные привода</h5>
+          <ul>
+            {% for gun in catalog.guns.all %}
+              <li>{{ gun }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      
+      {% if catalog.airsoft_equipment.all %}
+        <div class="mt-3">
+          <h5>Страйбольное оборудование</h5>
+          <ul>
+            {% for equipment in catalog.airsoft_equipment.all %}
+              <li>{{ equipment }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      
+      {% if catalog.airsoft_games.all %}
+        <div class="mt-3">
+          <h5>Страйбольные игры</h5>
+          <ul>
+            {% for game in catalog.airsoft_games.all %}
+              <li>{{ game }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      
+      {% if catalog.guns_accessories.all %}
+        <div class="mt-3">
+          <h5>Страйбольные аксессуары</h5>
+          <ul>
+            {% for accessory in catalog.guns_accessories.all %}
+              <li>{{ accessory }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      
+      {% if catalog.guns_modules.all %}
+        <div class="mt-3">
+          <h5>Страйбольные модули, напечатанные на 3D принтере</h5>
+          <ul>
+            {% for module in catalog.guns_modules.all %}
+              <li>{{ module }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
