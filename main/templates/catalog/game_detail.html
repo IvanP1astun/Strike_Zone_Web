@@ -1,0 +1,505 @@
+{% extends 'base.html' %}
+{% block title %}{{ game.name }}{% endblock %}
+
+{% block content %}
+<style>
+  .game-header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+  }
+  .registration-form {
+    background: #fff;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+  }
+  .registrations-list {
+    background: #fff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+    border: 1px solid #e9ecef;
+  }
+  .status-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .status-yes { background: #d4edda; color: #155724; }
+  .status-no { background: #f8d7da; color: #721c24; }
+  .status-unknown { background: #fff3cd; color: #856404; }
+  
+  .stat-card {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .stat-card.active {
+    border: 2px solid #0d6efd;
+    background: #e7f1ff;
+  }
+  .stat-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0d6efd;
+  }
+  .stat-number.yes { color: #198754; }
+  .stat-number.no { color: #dc3545; }
+  .stat-number.unknown { color: #ffc107; }
+  
+  .registration-item {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+  }
+  .registration-item:hover {
+    background: #f8f9ff;
+    padding-left: 10px;
+  }
+  .registration-item:last-child {
+    border-bottom: none;
+  }
+  
+  .btn-cancel:hover {
+    transform: scale(1.05);
+  }
+  .field-hint {
+    font-size: 11px;
+    color: #6c757d;
+    display: block;
+    margin-top: 2px;
+  }
+  
+  .filter-btn {
+    transition: all 0.3s ease;
+  }
+  .filter-btn:hover {
+    transform: scale(1.05);
+  }
+  .filter-btn.active {
+    background: #0d6efd;
+    color: white;
+  }
+  
+  .search-box {
+    position: relative;
+  }
+  .search-box .bi-search {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+  }
+  .search-box input {
+    padding-left: 35px;
+  }
+  
+  .registration-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #495057;
+    flex-shrink: 0;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #6c757d;
+  }
+  .empty-state .icon {
+    font-size: 48px;
+    color: #dee2e6;
+    display: block;
+    margin-bottom: 15px;
+  }
+  
+  .error-message {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 15px;
+  }
+</style>
+
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'catalog' %}">Каталог</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'catalog_games' %}">Страйкбольные игры</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ game.name }}</li>
+  </ol>
+</nav>
+
+<div class="game-header">
+  <div class="d-flex justify-content-between align-items-start flex-wrap">
+    <div>
+      <h1 class="display-5 mb-2">{{ game.name }}</h1>
+      <p class="mb-1"><i class="bi bi-calendar3 me-2"></i>{{ game.date|date:"d.m.Y" }}</p>
+      {% if game.location %}
+        <p class="mb-1"><i class="bi bi-geo-alt me-2"></i>{{ game.location }}</p>
+      {% endif %}
+      {% if game.price %}
+        <p class="mb-0"><i class="bi bi-currency-ruble me-2"></i>{{ game.price }} ₽</p>
+      {% endif %}
+    </div>
+    <div class="mt-2 mt-sm-0">
+      <span class="badge bg-success" style="font-size: 16px; padding: 8px 20px;">
+        <i class="bi bi-people me-1"></i>
+        {{ total_count }}/{{ game.max_players }}
+      </span>
+    </div>
+  </div>
+  {% if game.description %}
+    <p class="mt-3 mb-0" style="opacity: 0.9;">{{ game.description }}</p>
+  {% endif %}
+</div>
+
+<div class="row">
+  <!-- Статистика с фильтрацией -->
+  <div class="col-12 mb-4">
+    <div class="row g-3">
+      <div class="col-4">
+        <a href="?status=yes{% if search_query %}&search={{ search_query }}{% endif %}" 
+           class="text-decoration-none">
+          <div class="stat-card {% if status_filter == 'yes' %}active{% endif %}">
+            <div class="stat-number yes">{{ yes_count }}</div>
+            <div class="text-muted small">✅ Приедут</div>
+          </div>
+        </a>
+      </div>
+      <div class="col-4">
+        <a href="?status=no{% if search_query %}&search={{ search_query }}{% endif %}" 
+           class="text-decoration-none">
+          <div class="stat-card {% if status_filter == 'no' %}active{% endif %}">
+            <div class="stat-number no">{{ no_count }}</div>
+            <div class="text-muted small">❌ Не приедут</div>
+          </div>
+        </a>
+      </div>
+      <div class="col-4">
+        <a href="?status=unknown{% if search_query %}&search={{ search_query }}{% endif %}" 
+           class="text-decoration-none">
+          <div class="stat-card {% if status_filter == 'unknown' %}active{% endif %}">
+            <div class="stat-number unknown">{{ unknown_count }}</div>
+            <div class="text-muted small">❓ Неизвестно</div>
+          </div>
+        </a>
+      </div>
+    </div>
+    {% if status_filter != 'all' or search_query %}
+      <div class="mt-2 text-center">
+        <a href="?status=all" class="btn btn-sm btn-outline-secondary">
+          <i class="bi bi-x-circle me-1"></i>Сбросить фильтры
+        </a>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Форма регистрации -->
+  <div class="col-lg-5 mb-4">
+    <div class="registration-form">
+      <h4 class="mb-3">
+        {% if user_registration %}
+          ✏️ Редактировать регистрацию
+        {% else %}
+          📝 Регистрация на игру
+        {% endif %}
+      </h4>
+      
+      {% if form.errors %}
+        <div class="error-message">
+          <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Пожалуйста, исправьте ошибки:</strong>
+          <ul class="mb-0 mt-1">
+            {% for field, errors in form.errors.items %}
+              {% for error in errors %}
+                <li>• {{ error }}</li>
+              {% endfor %}
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+      
+      {% if user.is_authenticated and not user_registration %}
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+          <i class="bi bi-info-circle me-2"></i>
+          Данные из вашего профиля автоматически подставлены в форму.
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endif %}
+      
+      {% if user_registration %}
+        <div class="alert alert-info">
+          <i class="bi bi-info-circle me-2"></i>
+          Вы уже зарегистрированы на эту игру. Измените статус ниже.
+        </div>
+      {% endif %}
+      
+      <form method="post">
+        {% csrf_token %}
+        
+        {% if user_registration %}
+          <div class="mb-3">
+            <label class="form-label">Статус участия</label>
+            {{ form.participation_status }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Наличие амуниции</label>
+            <div class="d-flex gap-4">
+              {% for radio in form.has_equipment %}
+                <div class="form-check">
+                  {{ radio.tag }}
+                  <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-check">
+              {{ form.has_car }}
+              <label class="form-check-label" for="{{ form.has_car.id_for_label }}">{{ form.has_car.label }}</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.comment.id_for_label }}" class="form-label">Комментарий</label>
+            {{ form.comment }}
+          </div>
+          <div class="mt-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1">
+              <i class="bi bi-save me-2"></i>Обновить статус
+            </button>
+            <a href="{% url 'cancel_registration' user_registration.id %}" 
+               class="btn btn-danger btn-cancel"
+               onclick="return confirm('Вы уверены, что хотите отменить регистрацию?')">
+              <i class="bi bi-x-circle"></i>
+            </a>
+          </div>
+        {% else %}
+          {% if user.is_authenticated %}
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                {{ form.first_name }}
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+              </div>
+              <div class="col-6 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                {{ form.last_name }}
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Номер телефона</label>
+                {{ form.phone_number }}
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+              </div>
+              <div class="col-6 mb-3">
+                <label for="{{ form.callsign.id_for_label }}" class="form-label">Позывной (необязательно)</label>
+                {{ form.callsign }}
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+              </div>
+            </div>
+          {% else %}
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                {{ form.first_name }}
+              </div>
+              <div class="col-6 mb-3">
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                {{ form.last_name }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-6 mb-3">
+                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Номер телефона</label>
+                {{ form.phone_number }}
+              </div>
+              <div class="col-6 mb-3">
+                <label for="{{ form.callsign.id_for_label }}" class="form-label">Позывной (необязательно)</label>
+                {{ form.callsign }}
+              </div>
+            </div>
+          {% endif %}
+          
+          <div class="mb-3">
+            <label class="form-label">Статус участия</label>
+            {{ form.participation_status }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Наличие амуниции</label>
+            <div class="d-flex gap-4">
+              {% for radio in form.has_equipment %}
+                <div class="form-check">
+                  {{ radio.tag }}
+                  <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="mb-3">
+            <div class="form-check">
+              {{ form.has_car }}
+              <label class="form-check-label" for="{{ form.has_car.id_for_label }}">{{ form.has_car.label }}</label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="{{ form.comment.id_for_label }}" class="form-label">Комментарий</label>
+            {{ form.comment }}
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            <i class="bi bi-check-circle me-2"></i>Зарегистрироваться
+          </button>
+        {% endif %}
+      </form>
+
+      {% if not user.is_authenticated %}
+        <div class="mt-3 text-center">
+          <small class="text-muted">
+            <i class="bi bi-info-circle me-1"></i>
+            <a href="{% url 'login' %}">Войдите</a> или 
+            <a href="{% url 'register' %}">зарегистрируйтесь</a>, 
+            чтобы данные подставлялись автоматически
+          </small>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Список участников -->
+  <div class="col-lg-7">
+    <div class="registrations-list">
+      <h4 class="mb-3">👥 Участники ({{ registrations.count }})</h4>
+      
+      <!-- Поиск -->
+      <form method="get" class="mb-3">
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" 
+                 name="search" 
+                 class="form-control" 
+                 placeholder="Поиск по имени, фамилии, позывному или телефону..."
+                 value="{{ search_query }}">
+          {% if status_filter != 'all' %}
+            <input type="hidden" name="status" value="{{ status_filter }}">
+          {% endif %}
+        </div>
+      </form>
+      
+      {% if registrations %}
+        <div style="max-height: 500px; overflow-y: auto;">
+          {% for reg in registrations %}
+            <div class="registration-item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="d-flex gap-3">
+                  <div class="registration-avatar">
+                    {{ reg.first_name|first|upper }}{{ reg.last_name|first|upper }}
+                  </div>
+                  <div>
+                    <strong>{{ reg.full_name }}</strong>
+                    {% if reg.callsign %}
+                      <span class="text-muted">({{ reg.callsign }})</span>
+                    {% endif %}
+                    {% if reg.user %}
+                      <span class="badge bg-primary" style="font-size: 10px;">
+                        <i class="bi bi-check-circle-fill"></i> верифицирован
+                      </span>
+                    {% endif %}
+                    <br>
+                    <small class="text-muted">
+                      📱 {{ reg.phone_number }}
+                      {% if reg.has_car %}
+                        <span class="badge bg-info">🚗 Есть авто</span>
+                      {% endif %}
+                      <span class="badge bg-secondary">{{ reg.get_has_equipment_display }}</span>
+                    </small>
+                    {% if reg.comment %}
+                      <br>
+                      <small class="text-muted"><i class="bi bi-chat me-1"></i>{{ reg.comment|truncatewords:10 }}</small>
+                    {% endif %}
+                  </div>
+                </div>
+                <div class="text-end">
+                  <span class="status-badge status-{{ reg.participation_status }}">
+                    {{ reg.get_participation_status_display }}
+                  </span>
+                  <br>
+                  {% if reg.registered_at %}
+                    <small class="text-muted" style="font-size: 10px;">
+                      {{ reg.registered_at|date:"d.m.Y H:i" }}
+                    </small>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        
+        <!-- Пагинация / Итоги -->
+        <div class="mt-3 pt-2 border-top">
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              Показано: {{ registrations.count }} из {{ total_count }} участников
+            </small>
+            <div class="d-flex gap-2">
+              <span class="badge bg-success">✅ {{ yes_count }}</span>
+              <span class="badge bg-danger">❌ {{ no_count }}</span>
+              <span class="badge bg-warning text-dark">❓ {{ unknown_count }}</span>
+            </div>
+          </div>
+        </div>
+        
+      {% else %}
+        <div class="empty-state">
+          <span class="icon">📭</span>
+          {% if search_query or status_filter != 'all' %}
+            <h5>По вашему запросу ничего не найдено</h5>
+            <p class="text-muted">Попробуйте изменить параметры поиска или фильтрации</p>
+            <a href="?status=all" class="btn btn-outline-primary btn-sm">
+              <i class="bi bi-arrow-clockwise me-1"></i>Сбросить фильтры
+            </a>
+          {% else %}
+            <h5>Пока никто не зарегистрировался</h5>
+            <p class="text-muted">Будьте первым! Зарегистрируйтесь на игру выше.</p>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="mt-4">
+  <a href="{% url 'catalog_games' %}" class="btn btn-outline-secondary">
+    ← Назад к играм
+  </a>
+</div>
+{% endblock %}

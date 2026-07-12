@@ -1,0 +1,29 @@
+<footer class="bg-dark text-light py-4 mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        <h5><i class="bi bi-crosshair me-2"></i>StrikeZone</h5>
+        <p class="text-muted small">Страйкбольный портал для организации игр и общения.</p>
+      </div>
+      <div class="col-md-4">
+        <h6>Навигация</h6>
+        <ul class="list-unstyled small">
+          <li><a href="{% url 'home' %}" class="text-decoration-none text-muted">Главная</a></li>
+          <li><a href="{% url 'catalog' %}" class="text-decoration-none text-muted">Каталог</a></li>
+          <li><a href="{% url 'rules' %}" class="text-decoration-none text-muted">Правила</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4">
+        <h6>Контакты</h6>
+        <ul class="list-unstyled small text-muted">
+          <li><i class="bi bi-envelope me-2"></i>info@strikezone.ru</li>
+          <li><i class="bi bi-telegram me-2"></i>@strikezone</li>
+        </ul>
+      </div>
+    </div>
+    <hr class="border-secondary">
+    <div class="text-center text-muted small">
+      &copy; {% now "Y" %} StrikeZone. Все права защищены.
+    </div>
+  </div>
+</footer>
