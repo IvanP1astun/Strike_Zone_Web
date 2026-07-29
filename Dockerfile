@@ -19,8 +19,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Копируем весь проект
 COPY . .
 
-# Создаем папки для статики и медиа
-RUN mkdir -p /app/staticfiles /app/media
+# Создаем папки для статики, медиа и логов
+RUN mkdir -p /app/staticfiles /app/media /app/logs
 
 # Собираем статику
 RUN python manage.py collectstatic --noinput

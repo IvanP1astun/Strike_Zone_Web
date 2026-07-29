@@ -137,6 +137,10 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = '/app/media'
 
 # Logging
+LOG_DIR = '/app/logs'
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -144,7 +148,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/app/logs/django.log',
+            'filename': os.path.join(LOG_DIR, 'django.log'),
         },
     },
     'loggers': {
