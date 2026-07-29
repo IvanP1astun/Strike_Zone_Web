@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, CreateView
@@ -25,6 +26,7 @@ from .forms import (
     CustomUserCreationForm,
     CustomAuthenticationForm,
     ProfileForm,
+    GameCreateForm,
 )
 
 
@@ -123,73 +125,49 @@ class CustomLogoutView(LogoutView):
 
 
 def catalog(request):
-    """Страница каталога с разделами"""
-    sections = []
-
-    games = AirsoftGame.objects.filter(is_active=True)
-    if games:
-        sections.append(
-            {
-                "name": "Страйкбольные игры",
-                "icon": "🎯",
-                "description": "Расписание, сценарии, регистрация на игры",
-                "count": games.count(),
-                "url": "catalog_games",
-                "color": "#dc3545",
-            }
-        )
-
-    modules = GunModule.objects.all()
-    if modules:
-        sections.append(
-            {
-                "name": "Аксессуары 3D печать",
-                "icon": "🖨️",
-                "description": "Индивидуальные детали, апгрейды, кастом",
-                "count": modules.count(),
-                "url": "catalog_modules",
-                "color": "#fd7e14",
-            }
-        )
-
-    guns = Gun.objects.all()
-    if guns:
-        sections.append(
-            {
-                "name": "Страйкбольные привода",
-                "icon": "🔫",
-                "description": "AEG, GBB, HPA, снайперские винтовки",
-                "count": guns.count(),
-                "url": "catalog_guns",
-                "color": "#198754",
-            }
-        )
-
-    accessories = GunAccessory.objects.all()
-    if accessories:
-        sections.append(
-            {
-                "name": "Аксессуары для приводов",
-                "icon": "🧩",
-                "description": "Прицелы, глушители, тактические ручки",
-                "count": accessories.count(),
-                "url": "catalog_accessories",
-                "color": "#6f42c1",
-            }
-        )
-
-    equipment = AirsoftEquipment.objects.all()
-    if equipment:
-        sections.append(
-            {
-                "name": "Страйкбольное оборудование",
-                "icon": "🛡️",
-                "description": "Хронографы, зарядки, аккумуляторы",
-                "count": equipment.count(),
-                "url": "catalog_equipment",
-                "color": "#0dcaf0",
-            }
-        )
+    """Страница каталога с разделами (всегда статичные)"""
+    sections = [
+        {
+            "name": "Страйкбольные игры",
+            "icon": "🎯",
+            "description": "Расписание, сценарии, регистрация на игры",
+            "count": AirsoftGame.objects.filter(is_active=True).count(),
+            "url": "catalog_games",
+            "color": "#dc3545",
+        },
+        {
+            "name": "Аксессуары 3D печать",
+            "icon": "🖨️",
+            "description": "Индивидуальные детали, апгрейды, кастом",
+            "count": GunModule.objects.count(),
+            "url": "catalog_modules",
+            "color": "#fd7e14",
+        },
+        {
+            "name": "Страйкбольные привода",
+            "icon": "🔫",
+            "description": "AEG, GBB, HPA, снайперские винтовки",
+            "count": Gun.objects.count(),
+            "url": "catalog_guns",
+            "color": "#198754",
+        },
+        {
+            "name": "Аксессуары для приводов",
+            "icon": "🧩",
+            "description": "Прицелы, глушители, тактические ручки",
+            "count": GunAccessory.objects.count(),
+            "url": "catalog_accessories",
+            "color": "#6f42c1",
+        },
+        {
+            "name": "Страйкбольное оборудование",
+            "icon": "🛡️",
+            "description": "Хронографы, зарядки, аккумуляторы",
+            "count": AirsoftEquipment.objects.count(),
+            "url": "catalog_equipment",
+            "color": "#0dcaf0",
+        },
+    ]
 
     return render(
         request,
@@ -424,3 +402,30 @@ def profile(request):
             "past_registrations": past_registrations,
         },
     )
+
+
+@login_required
+def game_create(request):
+    """Создание новой игры (только для командиров)"""
+
+    # Проверка прав
+    if not request.user.profile.can_create_games:
+        messages.error(request, 'У вас нет прав для создания игр.')
+        return redirect('catalog_games')
+
+    if request.method == 'POST':
+        form = GameCreateForm(request.POST, request.FILES)
+        if form.is_valid():
+            game = form.save(commit=False)
+            game.created_by = request.user
+            game.save()
+            messages.success(request, f'✅ Игра "{game.name}" успешно создана!')
+            return redirect('game_detail', game_id=game.id)
+    else:
+        form = GameCreateForm()
+
+    return render(request, 'catalog/game_create.html', {
+        'form': form,
+        'title': 'Создание игры',
+        'icon': '➕',
+    })

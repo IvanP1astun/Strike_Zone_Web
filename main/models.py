@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 from django.utils import timezone
 from PIL import Image
 
@@ -30,6 +32,13 @@ class News(models.Model):
 
 class Profile(models.Model):
     """Профиль пользователя (расширение User)"""
+
+    # Роли пользователей
+    ROLE_CHOICES = [
+        ('player', 'Игрок'),
+        ('commander', 'Командир'),
+        ('admin', 'Администратор'),
+    ]
 
     user = models.OneToOneField(
         User,
@@ -64,6 +73,13 @@ class Profile(models.Model):
         max_length=20, verbose_name="Номер телефона", blank=True
     )
 
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        default='player',
+        verbose_name='Роль'
+    )
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
 
@@ -87,6 +103,11 @@ class Profile(models.Model):
         if self.avatar and hasattr(self.avatar, "url"):
             return self.avatar.url
         return "/static/images/default-avatar.png"
+
+    @property
+    def can_create_games(self):
+        """Может ли пользователь создавать игры"""
+        return self.role in ['commander', 'admin']
 
     def save(self, *args, **kwargs):
         """Оптимизация аватара при сохранении"""
@@ -278,6 +299,70 @@ class Catalog(models.Model):
 class AirsoftGame(models.Model):
     """Страйкбольные игры"""
 
+    STATUS_CHOICES = [
+        ('upcoming', 'Предстоит'),
+        ('ongoing', 'Идёт'),
+        ('finished', 'Завершена'),
+        ('archived', 'Архивирована'),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='upcoming',
+        verbose_name='Статус'
+    )
+
+    created_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_games',
+        verbose_name='Создатель'
+    )
+
+    finished_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Дата завершения'
+    )
+
+    archived_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        verbose_name='Дата архивации'
+    )
+
+    def update_status(self):
+        """Обновляет статус игры в зависимости от даты"""
+        today = timezone.now().date()
+
+        if self.status == 'archived':
+            return
+
+        if self.date < today:
+            # Игра уже прошла
+            if self.status != 'finished':
+                self.status = 'finished'
+                self.finished_at = timezone.now()
+                self.save()
+
+            # Если прошло больше 3 дней - архивируем
+            if self.finished_at and (timezone.now() - self.finished_at).days >= 3:
+                self.status = 'archived'
+                self.archived_at = timezone.now()
+                self.is_active = False
+                self.save()
+
+        elif self.date == today:
+            self.status = 'ongoing'
+            self.save()
+
+        else:
+            self.status = 'upcoming'
+            self.save()
+
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
         unique=True,
@@ -451,3 +536,9 @@ class Favorite(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=200)
     is_published = models.BooleanField(default=False)
+
+
+@receiver(pre_save, sender=AirsoftGame)
+def game_pre_save(sender, instance, **kwargs):
+    """Автоматически обновляет статус перед сохранением"""
+    instance.update_status()

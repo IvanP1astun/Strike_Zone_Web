@@ -1,7 +1,9 @@
+from time import timezone
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
-from .models import GameRegistration, News, Profile
+from .models import GameRegistration, News, Profile, AirsoftGame
 
 User = get_user_model()
 
@@ -12,6 +14,73 @@ class NewsForm(forms.ModelForm):
     class Meta:
         model = News
         fields = ["title", "content", "is_published"]
+
+
+class GameCreateForm(forms.ModelForm):
+    """Форма создания игры (только для командиров)"""
+
+    class Meta:
+        model = AirsoftGame
+        fields = [
+            'name',
+            'date',
+            'description',
+            'location',
+            'price',
+            'max_players',
+            'image',
+            'is_active',
+        ]
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Название игры'
+            }),
+            'date': forms.DateInput(attrs={
+                'class': 'form-control',
+                'type': 'date'
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 4,
+                'placeholder': 'Описание игры...'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Место проведения'
+            }),
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Стоимость участия'
+            }),
+            'max_players': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Максимум игроков'
+            }),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'form-control'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }
+        labels = {
+            'name': 'Название игры',
+            'date': 'Дата проведения',
+            'description': 'Описание',
+            'location': 'Место проведения',
+            'price': 'Стоимость участия (₽)',
+            'max_players': 'Максимум игроков',
+            'image': 'Изображение (необязательно)',
+            'is_active': 'Игра активна (видна на сайте)',
+        }
+
+    def clean_date(self):
+        """Проверка: дата не должна быть в прошлом"""
+        date = self.cleaned_data.get('date')
+        if date and date < timezone.now().date():
+            raise forms.ValidationError('Дата игры не может быть в прошлом!')
+        return date
 
 
 class GameRegistrationForm(forms.ModelForm):

@@ -15,6 +15,7 @@ urlpatterns = [
     path("catalog/<int:pk>/", views.catalog_detail, name="catalog_detail"),
     # Разделы каталога
     path("catalog/games/", views.catalog_games, name="catalog_games"),
+    path('catalog/games/create/', views.game_create, name='game_create'),
     path("catalog/games/<int:game_id>/", views.game_detail, name="game_detail"),
     path(
         "catalog/games/cancel/<int:registration_id>/",
