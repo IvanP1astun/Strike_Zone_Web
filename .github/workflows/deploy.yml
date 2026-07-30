@@ -29,22 +29,23 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/strikezone-web:latest
 
-      - name: 🔑 Set up SSH
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: 🔗 Connect to Tailscale
+        uses: tailscale/github-action@v2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          tags: tag:github-actions
 
       - name: 🚀 Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             cd /home/${{ secrets.SERVER_USER }}/Strike_Zone_Web
             echo "🔄 Pulling latest image..."
-            docker-compose pull web
+            docker compose pull web
             echo "🔄 Restarting containers..."
-            docker-compose up -d --force-recreate
+            docker compose up -d --force-recreate
             echo "📊 Running migrations..."
-            docker-compose exec -T web python manage.py migrate
+            docker compose exec -T web python manage.py migrate
             echo "📦 Collecting static files..."
-            docker-compose exec -T web python manage.py collectstatic --noinput
+            docker compose exec -T web python manage.py collectstatic --noinput
             echo "✅ Deploy completed!"
           ENDSSH
