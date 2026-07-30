@@ -34,6 +34,13 @@ jobs:
         with:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
           tags: tag:github-actions
+      
+      - name: 🔍 Debug SSH key
+        run: |
+          echo "Checking SSH key..."
+          ls -la ~/.ssh/
+          echo "Key content:"
+          cat ~/.ssh/id_rsa || echo "No id_rsa found"
 
       - name: Add server to known_hosts
         run: |
