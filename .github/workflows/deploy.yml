@@ -35,10 +35,10 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
           tags: tag:github-actions
 
-      - name: 🔍 Debug SSH connection
+      - name: Add server to known_hosts
         run: |
-          echo "Testing SSH connection..."
-          ssh -vvv -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} 'echo "Connected successfully!"'
+          mkdir -p ~/.ssh
+          ssh-keyscan -p 2222 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🚀 Deploy to Server
         run: |
