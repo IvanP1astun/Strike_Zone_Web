@@ -7,6 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.db import models
 
 from .models import (
     News,
@@ -19,6 +20,7 @@ from .models import (
     GameRegistration,
     Profile,
 )
+
 from .forms import (
     NewsForm,
     GameRegistrationForm,
@@ -281,7 +283,6 @@ def game_detail(request, game_id):
             | models.Q(callsign__icontains=search_query)
             | models.Q(phone_number__icontains=search_query)
         )
-
     # Статистика
     yes_count = game.registrations.filter(participation_status="yes").count()
     no_count = game.registrations.filter(participation_status="no").count()
