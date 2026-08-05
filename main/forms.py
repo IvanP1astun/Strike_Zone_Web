@@ -75,10 +75,11 @@ class GameCreateForm(forms.ModelForm):
         }
 
     def clean_date(self):
-    date = self.cleaned_data.get('date')
-    if date and date < timezone.now().date():
-        raise forms.ValidationError('Дата игры не может быть в прошлом!')
-    return date
+        """Проверка: дата не должна быть в прошлом"""
+        date = self.cleaned_data.get('date')
+        if date and date < timezone.now().date():
+            raise forms.ValidationError('Дата игры не может быть в прошлом!')
+        return date
 
 
 class GameRegistrationForm(forms.ModelForm):
