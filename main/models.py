@@ -341,27 +341,30 @@ class AirsoftGame(models.Model):
         if self.status == 'archived':
             return
 
-        if self.date < today:
-            # Игра уже прошла
-            if self.status != 'finished':
-                self.status = 'finished'
-                self.finished_at = timezone.now()
+        # Временно отключаем сигналы
+        from django.db.models.signals import pre_save
+        pre_save.disconnect(game_pre_save, sender=AirsoftGame)
+
+        try:
+            if self.date < today:
+                if self.status != 'finished':
+                    self.status = 'finished'
+                    self.finished_at = timezone.now()
+                    self.save()
+                if self.finished_at and (timezone.now() - self.finished_at).days >= 3:
+                    self.status = 'archived'
+                    self.archived_at = timezone.now()
+                    self.is_active = False
+                    self.save()
+            elif self.date == today:
+                self.status = 'ongoing'
                 self.save()
-
-            # Если прошло больше 3 дней - архивируем
-            if self.finished_at and (timezone.now() - self.finished_at).days >= 3:
-                self.status = 'archived'
-                self.archived_at = timezone.now()
-                self.is_active = False
+            else:
+                self.status = 'upcoming'
                 self.save()
-
-        elif self.date == today:
-            self.status = 'ongoing'
-            self.save()
-
-        else:
-            self.status = 'upcoming'
-            self.save()
+        finally:
+            # Включаем сигналы обратно
+            pre_save.connect(game_pre_save, sender=AirsoftGame)
 
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
