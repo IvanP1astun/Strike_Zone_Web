@@ -542,3 +542,36 @@ class Post(models.Model):
 def game_pre_save(sender, instance, **kwargs):
     """Автоматически обновляет статус перед сохранением"""
     instance.update_status()
+
+
+def create_groups():
+    """Создание групп и прав для пользователей"""
+    from django.contrib.auth.models import Group, Permission
+    from django.contrib.contenttypes.models import ContentType
+    # Группа "Организаторы"
+    organizer_group, created = Group.objects.get_or_create(name='Организаторы')
+    # Права на создание игр
+    game_content_type = ContentType.objects.get_for_model(AirsoftGame)
+    # Права для игр
+    permissions_map = {
+        'can_add_game': 'Может добавлять игры',
+        'can_change_game': 'Может изменять игры',
+        'can_delete_game': 'Может удалять игры',
+        'can_view_game': 'Может просматривать игры',
+    }
+    for codename, name in permissions_map.items():
+        permission, _ = Permission.objects.get_or_create(
+            codename=codename,
+            name=name,
+            content_type=game_content_type
+        )
+        organizer_group.permissions.add(permission)
+    # Добавляем права на просмотр профилей (если нужно)
+    profile_content_type = ContentType.objects.get_for_model(Profile)
+    view_profile_permission, _ = Permission.objects.get_or_create(
+        codename='can_view_profile',
+        name='Может просматривать профили',
+        content_type=profile_content_type
+    )
+    organizer_group.permissions.add(view_profile_permission)
+    return organizer_group
