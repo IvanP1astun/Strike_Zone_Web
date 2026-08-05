@@ -93,24 +93,16 @@
 
   .product-card .stock.in-stock { color: #198754; }
   .product-card .stock.out-of-stock { color: #dc3545; }
-  
-  /* Стили для статуса игры */
-  .game-status {
-    font-size: 12px;
-    padding: 2px 10px;
-    border-radius: 20px;
-    font-weight: 600;
-  }
-  .game-status.upcoming { background: #cfe2ff; color: #084298; }
-  .game-status.ongoing { background: #d1e7dd; color: #0f5132; }
-  .game-status.finished { background: #e2e3e5; color: #41464b; }
-  .game-status.archived { background: #f8d7da; color: #721c24; }
 
   .create-btn {
     transition: all 0.3s ease;
+    padding: 10px 25px;
+    font-size: 16px;
   }
+
   .create-btn:hover {
     transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
   }
 
   @media (max-width: 576px) {
@@ -144,9 +136,9 @@
     </div>
   </div>
   
-  <!-- Кнопка создания игры (только для командиров) -->
+  <!-- Кнопка создания игры (только для организаторов) -->
   {% if title == 'Страйкбольные игры' %}
-    {% if user.is_authenticated and user.profile.can_create_games %}
+    {% if user.is_authenticated and perms.main.can_add_game %}
       <a href="{% url 'game_create' %}" class="btn btn-success create-btn">
         <i class="bi bi-plus-circle me-2"></i>Создать игру
       </a>
@@ -160,14 +152,6 @@
     {% if title == 'Страйкбольные игры' %}
       <a href="{% url 'game_detail' item.id %}" class="item-card">
         <div class="item-title">{{ item.name }}</div>
-        <!-- Статус игры -->
-        <span class="game-status {{ item.status }}">
-          {% if item.status == 'upcoming' %}📅 Предстоит
-          {% elif item.status == 'ongoing' %}🔫 Идёт
-          {% elif item.status == 'finished' %}✅ Завершена
-          {% elif item.status == 'archived' %}📦 Архив
-          {% endif %}
-        </span>
         <div class="item-desc">
           <i class="bi bi-calendar3 me-1"></i>
           <span class="game-date">{{ item.date|date:"d.m.Y" }}</span>
@@ -188,12 +172,10 @@
             <i class="bi bi-people me-1"></i>
             {{ item.registrations.count }}/{{ item.max_players }}
           </span>
-          {% if item.status == 'upcoming' or item.status == 'ongoing' %}
-            {% if item.is_full %}
-              <span class="badge bg-danger">Мест нет</span>
-            {% elif item.places_left <= 5 and item.places_left > 0 %}
-              <span class="badge bg-warning text-dark">Осталось {{ item.places_left }} мест</span>
-            {% endif %}
+          {% if item.is_full %}
+            <span class="badge bg-danger">Мест нет</span>
+          {% elif item.places_left <= 5 and item.places_left > 0 %}
+            <span class="badge bg-warning text-dark">Осталось {{ item.places_left }} мест</span>
           {% endif %}
         </div>
       </a>
@@ -222,9 +204,11 @@
       <span class="icon">📭</span>
       <h4>В этом разделе пока пусто</h4>
       <p class="text-muted">Но мы работаем над наполнением!</p>
+      
+      <!-- Кнопка "Создать первую игру" в пустом состоянии -->
       {% if title == 'Страйкбольные игры' %}
-        {% if user.is_authenticated and user.profile.can_create_games %}
-          <a href="{% url 'game_create' %}" class="btn btn-success mt-3">
+        {% if user.is_authenticated and perms.main.can_add_game %}
+          <a href="{% url 'game_create' %}" class="btn btn-success create-btn mt-3">
             <i class="bi bi-plus-circle me-2"></i>Создать первую игру
           </a>
         {% endif %}

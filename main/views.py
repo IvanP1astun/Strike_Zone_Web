@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
@@ -405,14 +405,9 @@ def profile(request):
 
 
 @login_required
+@permission_required('main.can_add_game', raise_exception=True)
 def game_create(request):
-    """Создание новой игры (только для командиров)"""
-
-    # Проверка прав
-    if not request.user.profile.can_create_games:
-        messages.error(request, 'У вас нет прав для создания игр.')
-        return redirect('catalog_games')
-
+    """Создание новой игры (только для организаторов)"""
     if request.method == 'POST':
         form = GameCreateForm(request.POST, request.FILES)
         if form.is_valid():
@@ -423,7 +418,7 @@ def game_create(request):
             return redirect('game_detail', game_id=game.id)
     else:
         form = GameCreateForm()
-
+    
     return render(request, 'catalog/game_create.html', {
         'form': form,
         'title': 'Создание игры',
