@@ -1,5 +1,4 @@
-from time import timezone
-
+from django.utils import timezone
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
@@ -76,11 +75,10 @@ class GameCreateForm(forms.ModelForm):
         }
 
     def clean_date(self):
-        """Проверка: дата не должна быть в прошлом"""
-        date = self.cleaned_data.get('date')
-        if date and date < timezone.now().date():
-            raise forms.ValidationError('Дата игры не может быть в прошлом!')
-        return date
+    date = self.cleaned_data.get('date')
+    if date and date < timezone.now().date():
+        raise forms.ValidationError('Дата игры не может быть в прошлом!')
+    return date
 
 
 class GameRegistrationForm(forms.ModelForm):
