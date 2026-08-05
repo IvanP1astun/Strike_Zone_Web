@@ -46,8 +46,12 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             cd /home/${{ secrets.SERVER_USER }}/Strike_Zone_Web
+            echo "🔄 Saving local changes..."
+            git stash || true
             echo "🔄 Pulling latest code..."
-            git pull
+            git pull origin main
+            echo "🔄 Restoring local changes..."
+            git stash pop || true
             echo "🔄 Rebuilding containers..."
             docker compose down
             docker compose up -d --build
