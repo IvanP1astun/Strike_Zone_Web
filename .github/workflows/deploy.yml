@@ -46,10 +46,11 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             cd /home/${{ secrets.SERVER_USER }}/Strike_Zone_Web
-            echo "🔄 Pulling latest image..."
-            docker compose pull web
-            echo "🔄 Restarting containers..."
-            docker compose up -d --force-recreate
+            echo "🔄 Pulling latest code..."
+            git pull
+            echo "🔄 Rebuilding containers..."
+            docker compose down
+            docker compose up -d --build
             echo "📊 Running migrations..."
             docker compose exec -T web python manage.py migrate
             echo "📦 Collecting static files..."
