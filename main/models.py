@@ -345,34 +345,22 @@ class AirsoftGame(models.Model):
     def update_status(self):
         """Обновляет статус игры в зависимости от даты"""
         today = timezone.now().date()
-
         if self.status == 'archived':
             return
 
         # Временно отключаем сигналы
-        from django.db.models.signals import pre_save
-        pre_save.disconnect(game_pre_save, sender=AirsoftGame)
-
-        try:
-            if self.date < today:
-                if self.status != 'finished':
-                    self.status = 'finished'
-                    self.finished_at = timezone.now()
-                    self.save()
-                if self.finished_at and (timezone.now() - self.finished_at).days >= 3:
-                    self.status = 'archived'
-                    self.archived_at = timezone.now()
-                    self.is_active = False
-                    self.save()
-            elif self.date == today:
-                self.status = 'ongoing'
-                self.save()
-            else:
-                self.status = 'upcoming'
-                self.save()
-        finally:
-            # Включаем сигналы обратно
-            pre_save.connect(game_pre_save, sender=AirsoftGame)
+        if self.date < today:
+            if self.status != 'finished':
+                self.status = 'finished'
+                self.finished_at = timezone.now()
+            if self.finished_at and (timezone.now() - self.finished_at).days >= 3:
+                self.status = 'archived'
+                self.archived_at = timezone.now()
+                self.is_active = False
+        elif self.date == today:
+            self.status = 'ongoing'
+        else:
+            self.status = 'upcoming'
 
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
@@ -421,6 +409,12 @@ class AirsoftGame(models.Model):
     @property
     def places_left(self):
         return self.max_players - self.registered_players
+
+
+@receiver(pre_save, sender=AirsoftGame)
+def game_pre_save(sender, instance, **kwargs):
+    """Перед сохранением проставляет актуальный статус игры."""
+    instance.update_status()
 
 
 class GameRegistration(models.Model):

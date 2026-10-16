@@ -18,7 +18,7 @@ DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
 LOGIN_REDIRECT_URL = 'profile'  # или 'home'
 LOGOUT_REDIRECT_URL = 'home'
@@ -135,7 +135,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = '/app/media'
 
 # Logging
-LOG_DIR = '/app/logs'
+LOG_DIR = os.getenv('LOG_DIR', str(BASE_DIR / 'logs'))
 if not os.path.exists(LOG_DIR):
     os.makedirs(LOG_DIR)
 
