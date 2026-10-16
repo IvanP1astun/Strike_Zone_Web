@@ -21,6 +21,14 @@ class News(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
     is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
 
+    image = models.ImageField(
+        upload_to="news/",
+        verbose_name="Изображение",
+        blank=True,
+        null=True,
+        help_text="Загрузите картинку к новости (необязательно)"
+    )
+
     class Meta:
         ordering = ["-created_at"]
         verbose_name = "Новость"

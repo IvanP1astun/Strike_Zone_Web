@@ -12,7 +12,31 @@ class NewsForm(forms.ModelForm):
 
     class Meta:
         model = News
-        fields = ["title", "content", "is_published"]
+        fields = ["title", "content", "image", "is_published"]
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Заголовок новости'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'rows': 8,
+                'placeholder': 'Текст новости...'
+            }),
+            'image': forms.ClearableFileInput(attrs={
+                'class': 'form-control',
+                'accept': 'image/*'
+            }),
+            'is_published': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }
+        labels = {
+            'title': 'Заголовок',
+            'content': 'Содержание',
+            'image': 'Изображение (необязательно)',
+            'is_published': 'Опубликовать',
+        }
 
 
 class GameCreateForm(forms.ModelForm):
