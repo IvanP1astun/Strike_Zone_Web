@@ -22,8 +22,8 @@
         {% endif %}
         <p>{{ news.content|linebreaks }}</p>
         <small style="color: #666;">
-            Автор: {{ news.author.username }} |
-            Дата: {{ news.created_at|date:"d.m.Y H:i" }}
+          Автор: {{ news.author.username }} | 
+          Дата: {{ news.created_at|date:"d.m.Y H:i" }}
         </small>
       </div>
     {% empty %}
