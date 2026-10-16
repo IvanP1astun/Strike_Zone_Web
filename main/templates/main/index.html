@@ -18,7 +18,7 @@
       <div class="news-item" style="border-bottom: 1px solid #ccc; margin-bottom: 20px; padding-bottom: 20px;">
         <h3>{{ news.title }}</h3>
         {% if news.image %}
-            <img src="{{ news.image.url }}" alt="{{ news.title }}" style="max-width: 100%; margin-bottom: 10px;">
+            <img src="{{ news.image }}" alt="{{ news.title }}" style="max-width: 100%; margin-bottom: 10px;">
         {% endif %}
         <p>{{ news.content|linebreaks }}</p>
         <small style="color: #666;">
