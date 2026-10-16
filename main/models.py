@@ -5,6 +5,8 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from PIL import Image
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
 
 from .constants import MAX_NAME_LENGTH
 
@@ -543,16 +545,8 @@ class Post(models.Model):
     is_published = models.BooleanField(default=False)
 
 
-@receiver(pre_save, sender=AirsoftGame)
-def game_pre_save(sender, instance, **kwargs):
-    """Автоматически обновляет статус перед сохранением"""
-    instance.update_status()
-
-
 def create_groups():
     """Создание групп и прав для пользователей"""
-    from django.contrib.auth.models import Group, Permission
-    from django.contrib.contenttypes.models import ContentType
     # Группа "Организаторы"
     organizer_group, created = Group.objects.get_or_create(name='Организаторы')
     # Права на создание игр
