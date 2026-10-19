@@ -14,7 +14,7 @@ def send_telegram_message(text):
         logger.warning('TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы — уведомление пропущено')
         return
 
-    url = f'https:// api.telegram.org/bot{token}/sendMessage'
+    url = f'https://api.telegram.org/bot{token}/sendMessage'
     payload = {
         'chat_id': chat_id,
         'text': text,
@@ -24,5 +24,5 @@ def send_telegram_message(text):
     try:
         response = requests.post(url, data=payload, timeout=5)
         logger.info('Telegram: %s', response.status_code)
-    except requests.RequestException as e:
+    except requests.RequestException as e: 
         logger.error('Ошибка отправки в Telegram: %s', e)
