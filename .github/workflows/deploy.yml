@@ -113,3 +113,24 @@ jobs:
             docker compose exec -T web python manage.py collectstatic --noinput
             echo "✅ Deploy completed!"
           ENDSSH
+
+  notify-telegram:
+    runs-on: ubuntu-latest
+    needs: build-and-deploy  # Зависит от первого job
+    if: always()             # Выполнится даже если деплой упал
+
+    steps:
+      - name: 📢 Send Telegram notification
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ needs.build-and-deploy.result == 'success' && '✅' || '❌' }} *Deploy ${{ needs.build-and-deploy.result == 'success' && 'SUCCESS' || 'FAILED' }}*
+
+            *Repository:* ${{ github.repository }}
+            *Branch:* ${{ github.ref_name }}
+            *Commit:* ${{ github.event.head_commit.message || 'Manual run' }}
+            *Author:* ${{ github.event.head_commit.author.name || github.actor }}
+
+            🔗 [Смотреть логи](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
