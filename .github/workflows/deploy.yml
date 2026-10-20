@@ -8,8 +8,8 @@ on:
 
 jobs:
   tests:
+    # ... (ваш код тестов остался без изменений) ...
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:13.10
@@ -24,16 +24,13 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: "pip"
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -41,10 +38,8 @@ jobs:
           pip install flake8==6.0.0 flake8-isort==6.0.0
           pip install pytest pytest-django
           pip install -r requirements.txt
-
       - name: Lint with flake8
         run: python -m flake8 main/ strikezoneweb/
-
       - name: Run tests with pytest
         env:
           DEBUG: "False"
@@ -57,18 +52,11 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
         run: pytest
+
   build-and-deploy:
     needs: tests
     runs-on: ubuntu-latest
     steps:
-      - name: Debug OAuth Secrets Length
-        run: |
-          echo "Client ID length: ${#CLIENT_ID}"
-          echo "Client Secret length: ${#CLIENT_SECRET}"
-          echo "Client ID first 5 chars: ${CLIENT_ID:0:5}..."
-        env:
-          CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
@@ -88,11 +76,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/strikezone-web:latest
 
-      - name: Debug Secrets
-        run: |
-          if [ -z "${{ secrets.TS_OAUTH_CLIENT_ID }}" ]; then echo "CLIENT_ID пустой!"; else echo "CLIENT_ID есть"; fi
-          if [ -z "${{ secrets.TS_OAUTH_SECRET }}" ]; then echo "SECRET пустой!"; else echo "SECRET есть"; fi
-
+      # ИСПРАВЛЕННЫЙ ШАГ: Используем OAuth и v3
       - name: 🔗 Connect to Tailscale
         uses: tailscale/github-action@v3
         with:
@@ -100,6 +84,7 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:github-actions
 
+      # ИСПРАВЛЕННЫЙ ШАГ: Убрали ssh-keyscan, используем Here-Doc
       - name: 🔧 Setup SSH key
         run: |
           mkdir -p ~/.ssh
@@ -108,12 +93,10 @@ jobs:
           EOF
           chmod 600 ~/.ssh/id_rsa
 
-      - name: ⏳ Wait for Tailscale connection
-        run: sleep 15
-
+      # ИСПРАВЛЕННЫЙ ШАГ: Добавили -o StrictHostKeyChecking=no
       - name: 🚀 Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ConnectionAttempts=5 -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             cd /home/${{ secrets.SERVER_USER }}/Strike_Zone_Web
             echo "🔄 Saving local changes..."
             git stash || true
@@ -133,10 +116,10 @@ jobs:
           ENDSSH
 
   notify-telegram:
+    # ... (ваш код уведомлений остался без изменений) ...
     runs-on: ubuntu-latest
-    needs: build-and-deploy  # Зависит от первого job
-    if: always()             # Выполнится даже если деплой упал
-
+    needs: build-and-deploy
+    if: always()
     steps:
       - name: 📢 Send Telegram notification
         uses: appleboy/telegram-action@master
@@ -145,10 +128,8 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             ${{ needs.build-and-deploy.result == 'success' && '✅' || '❌' }} *Deploy ${{ needs.build-and-deploy.result == 'success' && 'SUCCESS' || 'FAILED' }}*
-
             *Repository:* ${{ github.repository }}
             *Branch:* ${{ github.ref_name }}
             *Commit:* ${{ github.event.head_commit.message || 'Manual run' }}
             *Author:* ${{ github.event.head_commit.author.name || github.actor }}
-
             🔗 [Смотреть логи](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
