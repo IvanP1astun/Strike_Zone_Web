@@ -110,7 +110,7 @@ jobs:
 
       - name: 🚀 Deploy to Server
         run: |
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
+          ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ConnectionAttempts=5 -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             cd /home/${{ secrets.SERVER_USER }}/Strike_Zone_Web
             echo "🔄 Saving local changes..."
             git stash || true
