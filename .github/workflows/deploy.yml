@@ -85,9 +85,12 @@ jobs:
       - name: 🔧 Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          cat << 'EOF' > ~/.ssh/id_rsa
+          ${{ secrets.SSH_PRIVATE_KEY }}
+          EOF
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p 2222 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          # Добавляем || true, чтобы падение ssh-keyscan (из-за плохого интернета) не ломало весь шаг
+          ssh-keyscan -p 2222 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts || true
       - name: 🚀 Deploy to Server
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
