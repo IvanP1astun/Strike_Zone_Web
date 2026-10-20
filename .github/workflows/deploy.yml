@@ -76,27 +76,21 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/strikezone-web:latest
 
-      # ИСПРАВЛЕННЫЙ ШАГ: Используем OAuth и v3
       - name: 🔗 Connect to Tailscale
-        uses: tailscale/github-action@v3
+        uses: tailscale/github-action@v2
         with:
-          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
           tags: tag:github-actions
 
-      # ИСПРАВЛЕННЫЙ ШАГ: Убрали ssh-keyscan, используем Here-Doc
       - name: 🔧 Setup SSH key
         run: |
           mkdir -p ~/.ssh
-          cat << 'EOF' > ~/.ssh/id_rsa
-          ${{ secrets.SSH_PRIVATE_KEY }}
-          EOF
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-
-      # ИСПРАВЛЕННЫЙ ШАГ: Добавили -o StrictHostKeyChecking=no
+          ssh-keyscan -p 2222 ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
       - name: 🚀 Deploy to Server
         run: |
-          ssh -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
             cd /home/${{ secrets.SERVER_USER }}/Strike_Zone_Web
             echo "🔄 Saving local changes..."
             git stash || true
@@ -116,7 +110,6 @@ jobs:
           ENDSSH
 
   notify-telegram:
-    # ... (ваш код уведомлений остался без изменений) ...
     runs-on: ubuntu-latest
     needs: build-and-deploy
     if: always()
