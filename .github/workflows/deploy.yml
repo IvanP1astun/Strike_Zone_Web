@@ -108,6 +108,9 @@ jobs:
           EOF
           chmod 600 ~/.ssh/id_rsa
 
+      - name: ⏳ Wait for Tailscale connection
+        run: sleep 15
+
       - name: 🚀 Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ConnectionAttempts=5 -p 2222 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} << 'ENDSSH'
