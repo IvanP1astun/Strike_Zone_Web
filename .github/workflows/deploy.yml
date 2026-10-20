@@ -94,7 +94,7 @@ jobs:
           if [ -z "${{ secrets.TS_OAUTH_SECRET }}" ]; then echo "SECRET пустой!"; else echo "SECRET есть"; fi
 
       - name: 🔗 Connect to Tailscale
-        uses: tailscale/github-action@v4
+        uses: tailscale/github-action@v2
         with:
           oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
