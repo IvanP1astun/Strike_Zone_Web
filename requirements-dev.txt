@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Development and CI tooling
+django-debug-toolbar==6.2.0
+pytest
+pytest-django
+flake8==6.0.0
+flake8-isort==6.0.0
