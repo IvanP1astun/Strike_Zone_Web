@@ -48,6 +48,10 @@ settings_local.py
 # Uploads
 media/
 uploads/
+avatars/
+
+# Runtime logs
+logs/
 
 # Debug
 debug.log
