@@ -4,6 +4,10 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+# Not an f-string on purpose: pycodestyle 2.10 reports a false E231 for ':'
+# inside f-strings on Python 3.12.
+TELEGRAM_API_URL = 'https://api.telegram.org/bot{token}/sendMessage'
+
 
 def send_telegram_message(text):
     """Отправляет сообщение в Telegram (безопасно, не ломает приложение)"""
@@ -14,7 +18,7 @@ def send_telegram_message(text):
         logger.warning('TELEGRAM_BOT_TOKEN или TELEGRAM_CHAT_ID не заданы — уведомление пропущено')
         return
 
-    url = f'https://api.telegram.org/bot{token}/sendMessage'
+    url = TELEGRAM_API_URL.format(token=token)
     payload = {
         'chat_id': chat_id,
         'text': text,
