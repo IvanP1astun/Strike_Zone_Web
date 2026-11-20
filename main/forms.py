@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import get_user_model
@@ -16,12 +17,12 @@ class NewsForm(forms.ModelForm):
         widgets = {
             'title': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Заголовок новости'
+                'placeholder': _('Заголовок новости')
             }),
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 8,
-                'placeholder': 'Текст новости...'
+                'placeholder': _('Текст новости...')
             }),
             'image': forms.ClearableFileInput(attrs={
                 'class': 'form-control',
@@ -32,10 +33,10 @@ class NewsForm(forms.ModelForm):
             }),
         }
         labels = {
-            'title': 'Заголовок',
-            'content': 'Содержание',
-            'image': 'Изображение (необязательно)',
-            'is_published': 'Опубликовать',
+            'title': _('Заголовок'),
+            'content': _('Содержание'),
+            'image': _('Изображение (необязательно)'),
+            'is_published': _('Опубликовать'),
         }
 
 
@@ -57,7 +58,7 @@ class GameCreateForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Название игры'
+                'placeholder': _('Название игры')
             }),
             'date': forms.DateInput(attrs={
                 'class': 'form-control',
@@ -66,19 +67,19 @@ class GameCreateForm(forms.ModelForm):
             'description': forms.Textarea(attrs={
                 'class': 'form-control',
                 'rows': 4,
-                'placeholder': 'Описание игры...'
+                'placeholder': _('Описание игры...')
             }),
             'location': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Место проведения'
+                'placeholder': _('Место проведения')
             }),
             'price': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Стоимость участия'
+                'placeholder': _('Стоимость участия')
             }),
             'max_players': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Максимум игроков'
+                'placeholder': _('Максимум игроков')
             }),
             'image': forms.ClearableFileInput(attrs={
                 'class': 'form-control'
@@ -88,21 +89,21 @@ class GameCreateForm(forms.ModelForm):
             }),
         }
         labels = {
-            'name': 'Название игры',
-            'date': 'Дата проведения',
-            'description': 'Описание',
-            'location': 'Место проведения',
-            'price': 'Стоимость участия (₽)',
-            'max_players': 'Максимум игроков',
-            'image': 'Изображение (необязательно)',
-            'is_active': 'Игра активна (видна на сайте)',
+            'name': _('Название игры'),
+            'date': _('Дата проведения'),
+            'description': _('Описание'),
+            'location': _('Место проведения'),
+            'price': _('Стоимость участия (₽)'),
+            'max_players': _('Максимум игроков'),
+            'image': _('Изображение (необязательно)'),
+            'is_active': _('Игра активна (видна на сайте)'),
         }
 
     def clean_date(self):
         """Проверка: дата не должна быть в прошлом"""
         date = self.cleaned_data.get('date')
         if date and date < timezone.now().date():
-            raise forms.ValidationError('Дата игры не может быть в прошлом!')
+            raise forms.ValidationError(_('Дата игры не может быть в прошлом!'))
         return date
 
 
@@ -123,10 +124,10 @@ class GameRegistrationForm(forms.ModelForm):
         ]
         widgets = {
             "first_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Введите имя"}
+                attrs={"class": "form-control", "placeholder": _("Введите имя")}
             ),
             "last_name": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Введите фамилию"}
+                attrs={"class": "form-control", "placeholder": _("Введите фамилию")}
             ),
             "phone_number": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "+7 (999) 123-45-67"}
@@ -134,7 +135,7 @@ class GameRegistrationForm(forms.ModelForm):
             "callsign": forms.TextInput(
                 attrs={
                     "class": "form-control",
-                    "placeholder": "Ваш позывной (необязательно)",
+                    "placeholder": _("Ваш позывной (необязательно)"),
                 }
             ),
             "participation_status": forms.Select(attrs={"class": "form-select"}),
@@ -144,19 +145,19 @@ class GameRegistrationForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "rows": 3,
-                    "placeholder": "Дополнительная информация...",
+                    "placeholder": _("Дополнительная информация..."),
                 }
             ),
         }
         labels = {
-            "first_name": "Имя",
-            "last_name": "Фамилия",
-            "phone_number": "Номер телефона",
-            "callsign": "Позывной (необязательно)",
-            "participation_status": "Статус участия",
-            "has_car": "У меня есть автомобиль",
-            "has_equipment": "Наличие амуниции",
-            "comment": "Комментарий",
+            "first_name": _("Имя"),
+            "last_name": _("Фамилия"),
+            "phone_number": _("Номер телефона"),
+            "callsign": _("Позывной (необязательно)"),
+            "participation_status": _("Статус участия"),
+            "has_car": _("У меня есть автомобиль"),
+            "has_equipment": _("Наличие амуниции"),
+            "comment": _("Комментарий"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -206,9 +207,11 @@ class GameRegistrationForm(forms.ModelForm):
                         return phone
 
                 raise forms.ValidationError(
-                    "❌ Этот номер телефона уже зарегистрирован на эту игру. "
-                    "Пожалуйста, используйте другой номер или войдите в аккаунт, "
-                    "которым вы регистрировались."
+                    _(
+                        "❌ Этот номер телефона уже зарегистрирован на эту игру. "
+                        "Пожалуйста, используйте другой номер или войдите в аккаунт, "
+                        "которым вы регистрировались."
+                    )
                 )
 
         return phone
@@ -238,15 +241,15 @@ class GameRegistrationEditForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "rows": 3,
-                    "placeholder": "Дополнительная информация...",
+                    "placeholder": _("Дополнительная информация..."),
                 }
             ),
         }
         labels = {
-            "participation_status": "Статус участия",
-            "has_car": "У меня есть автомобиль",
-            "has_equipment": "Наличие амуниции",
-            "comment": "Комментарий",
+            "participation_status": _("Статус участия"),
+            "has_car": _("У меня есть автомобиль"),
+            "has_equipment": _("Наличие амуниции"),
+            "comment": _("Комментарий"),
         }
 
 
@@ -261,12 +264,12 @@ class CustomUserCreationForm(UserCreationForm):
     )
     first_name = forms.CharField(
         required=True,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"}),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": _("Имя")}),
     )
     last_name = forms.CharField(
         required=True,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Фамилия"}
+            attrs={"class": "form-control", "placeholder": _("Фамилия")}
         ),
     )
 
@@ -282,17 +285,17 @@ class CustomUserCreationForm(UserCreationForm):
         ]
         widgets = {
             "username": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Имя пользователя"}
+                attrs={"class": "form-control", "placeholder": _("Имя пользователя")}
             ),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["password1"].widget = forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Пароль"}
+            attrs={"class": "form-control", "placeholder": _("Пароль")}
         )
         self.fields["password2"].widget = forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Подтверждение пароля"}
+            attrs={"class": "form-control", "placeholder": _("Подтверждение пароля")}
         )
 
     def save(self, commit=True):
@@ -311,10 +314,10 @@ class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["username"].widget = forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Имя пользователя"}
+            attrs={"class": "form-control", "placeholder": _("Имя пользователя")}
         )
         self.fields["password"].widget = forms.PasswordInput(
-            attrs={"class": "form-control", "placeholder": "Пароль"}
+            attrs={"class": "form-control", "placeholder": _("Пароль")}
         )
 
 
@@ -324,13 +327,13 @@ class ProfileForm(forms.ModelForm):
     first_name = forms.CharField(
         max_length=150,
         required=False,
-        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Имя"}),
+        widget=forms.TextInput(attrs={"class": "form-control", "placeholder": _("Имя")}),
     )
     last_name = forms.CharField(
         max_length=150,
         required=False,
         widget=forms.TextInput(
-            attrs={"class": "form-control", "placeholder": "Фамилия"}
+            attrs={"class": "form-control", "placeholder": _("Фамилия")}
         ),
     )
     email = forms.EmailField(
@@ -357,7 +360,7 @@ class ProfileForm(forms.ModelForm):
                 attrs={"class": "form-control", "type": "date"}
             ),
             "callsign": forms.TextInput(
-                attrs={"class": "form-control", "placeholder": "Ваш позывной"}
+                attrs={"class": "form-control", "placeholder": _("Ваш позывной")}
             ),
             "phone_number": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "+7 (999) 123-45-67"}
@@ -366,16 +369,16 @@ class ProfileForm(forms.ModelForm):
                 attrs={
                     "class": "form-control",
                     "rows": 4,
-                    "placeholder": "Расскажите о себе...",
+                    "placeholder": _("Расскажите о себе..."),
                 }
             ),
         }
         labels = {
-            "avatar": "Аватар",
-            "birth_date": "День рождения",
-            "callsign": "Позывной",
-            "phone_number": "Номер телефона",
-            "bio": "О себе",
+            "avatar": _("Аватар"),
+            "birth_date": _("День рождения"),
+            "callsign": _("Позывной"),
+            "phone_number": _("Номер телефона"),
+            "bio": _("О себе"),
         }
 
     def __init__(self, *args, **kwargs):

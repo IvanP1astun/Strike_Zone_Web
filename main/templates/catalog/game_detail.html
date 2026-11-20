@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}{{ game.name }}{% endblock %}
 
 {% block content %}
@@ -144,8 +145,8 @@
 
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{% url 'catalog' %}">Каталог</a></li>
-    <li class="breadcrumb-item"><a href="{% url 'catalog_games' %}">Страйкбольные игры</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'catalog' %}">{% translate "Каталог" %}</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'catalog_games' %}">{% translate "Страйкбольные игры" %}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ game.name }}</li>
   </ol>
 </nav>
@@ -183,7 +184,7 @@
            class="text-decoration-none">
           <div class="stat-card {% if status_filter == 'yes' %}active{% endif %}">
             <div class="stat-number yes">{{ yes_count }}</div>
-            <div class="text-muted small">✅ Приедут</div>
+            <div class="text-muted small">{% translate "✅ Приедут" %}</div>
           </div>
         </a>
       </div>
@@ -192,7 +193,7 @@
            class="text-decoration-none">
           <div class="stat-card {% if status_filter == 'no' %}active{% endif %}">
             <div class="stat-number no">{{ no_count }}</div>
-            <div class="text-muted small">❌ Не приедут</div>
+            <div class="text-muted small">{% translate "❌ Не приедут" %}</div>
           </div>
         </a>
       </div>
@@ -201,7 +202,7 @@
            class="text-decoration-none">
           <div class="stat-card {% if status_filter == 'unknown' %}active{% endif %}">
             <div class="stat-number unknown">{{ unknown_count }}</div>
-            <div class="text-muted small">❓ Неизвестно</div>
+            <div class="text-muted small">{% translate "❓ Неизвестно" %}</div>
           </div>
         </a>
       </div>
@@ -209,7 +210,7 @@
     {% if status_filter != 'all' or search_query %}
       <div class="mt-2 text-center">
         <a href="?status=all" class="btn btn-sm btn-outline-secondary">
-          <i class="bi bi-x-circle me-1"></i>Сбросить фильтры
+          <i class="bi bi-x-circle me-1"></i>{% translate "Сбросить фильтры" %}
         </a>
       </div>
     {% endif %}
@@ -220,15 +221,15 @@
     <div class="registration-form">
       <h4 class="mb-3">
         {% if user_registration %}
-          ✏️ Редактировать регистрацию
+          {% translate "✏️ Редактировать регистрацию" %}
         {% else %}
-          📝 Регистрация на игру
+          {% translate "📝 Регистрация на игру" %}
         {% endif %}
       </h4>
       
       {% if form.errors %}
         <div class="error-message">
-          <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Пожалуйста, исправьте ошибки:</strong>
+          <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>{% translate "Пожалуйста, исправьте ошибки:" %}</strong>
           <ul class="mb-0 mt-1">
             {% for field, errors in form.errors.items %}
               {% for error in errors %}
@@ -251,7 +252,7 @@
       {% if user.is_authenticated and not user_registration %}
         <div class="alert alert-info alert-dismissible fade show" role="alert">
           <i class="bi bi-info-circle me-2"></i>
-          Данные из вашего профиля автоматически подставлены в форму.
+          {% translate "Данные из вашего профиля автоматически подставлены в форму." %}
           <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
       {% endif %}
@@ -259,7 +260,7 @@
       {% if user_registration %}
         <div class="alert alert-info">
           <i class="bi bi-info-circle me-2"></i>
-          Вы уже зарегистрированы на эту игру. Измените статус ниже.
+          {% translate "Вы уже зарегистрированы на эту игру. Измените статус ниже." %}
         </div>
       {% endif %}
       
@@ -268,11 +269,11 @@
         
         {% if user_registration %}
           <div class="mb-3">
-            <label class="form-label">Статус участия</label>
+            <label class="form-label">{% translate "Статус участия" %}</label>
             {{ form.participation_status }}
           </div>
           <div class="mb-3">
-            <label class="form-label">Наличие амуниции</label>
+            <label class="form-label">{% translate "Наличие амуниции" %}</label>
             <div class="d-flex gap-4">
               {% for radio in form.has_equipment %}
                 <div class="form-check">
@@ -289,16 +290,16 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="{{ form.comment.id_for_label }}" class="form-label">Комментарий</label>
+            <label for="{{ form.comment.id_for_label }}" class="form-label">{% translate "Комментарий" %}</label>
             {{ form.comment }}
           </div>
           <div class="mt-3 d-flex gap-2">
             <button type="submit" class="btn btn-primary flex-grow-1">
-              <i class="bi bi-save me-2"></i>Обновить статус
+              <i class="bi bi-save me-2"></i>{% translate "Обновить статус" %}
             </button>
             <a href="{% url 'cancel_registration' user_registration.id %}" 
                class="btn btn-danger btn-cancel"
-               onclick="return confirm('Вы уверены, что хотите отменить регистрацию?')">
+               onclick="return confirm('{% translate "Вы уверены, что хотите отменить регистрацию?" as cancel_confirm %}{{ cancel_confirm|escapejs }}')">
               <i class="bi bi-x-circle"></i>
             </a>
           </div>
@@ -306,57 +307,57 @@
           {% if user.is_authenticated %}
             <div class="row">
               <div class="col-6 mb-3">
-                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">{% translate "Имя" %}</label>
                 {{ form.first_name }}
-                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>{% translate "Из профиля" %}</span>
               </div>
               <div class="col-6 mb-3">
-                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">{% translate "Фамилия" %}</label>
                 {{ form.last_name }}
-                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>{% translate "Из профиля" %}</span>
               </div>
             </div>
             <div class="row">
               <div class="col-6 mb-3">
-                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Номер телефона</label>
+                <label for="{{ form.phone_number.id_for_label }}" class="form-label">{% translate "Номер телефона" %}</label>
                 {{ form.phone_number }}
-                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>{% translate "Из профиля" %}</span>
               </div>
               <div class="col-6 mb-3">
-                <label for="{{ form.callsign.id_for_label }}" class="form-label">Позывной (необязательно)</label>
+                <label for="{{ form.callsign.id_for_label }}" class="form-label">{% translate "Позывной (необязательно)" %}</label>
                 {{ form.callsign }}
-                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>Из профиля</span>
+                <span class="field-hint"><i class="bi bi-check-circle-fill text-success me-1"></i>{% translate "Из профиля" %}</span>
               </div>
             </div>
           {% else %}
             <div class="row">
               <div class="col-6 mb-3">
-                <label for="{{ form.first_name.id_for_label }}" class="form-label">Имя</label>
+                <label for="{{ form.first_name.id_for_label }}" class="form-label">{% translate "Имя" %}</label>
                 {{ form.first_name }}
               </div>
               <div class="col-6 mb-3">
-                <label for="{{ form.last_name.id_for_label }}" class="form-label">Фамилия</label>
+                <label for="{{ form.last_name.id_for_label }}" class="form-label">{% translate "Фамилия" %}</label>
                 {{ form.last_name }}
               </div>
             </div>
             <div class="row">
               <div class="col-6 mb-3">
-                <label for="{{ form.phone_number.id_for_label }}" class="form-label">Номер телефона</label>
+                <label for="{{ form.phone_number.id_for_label }}" class="form-label">{% translate "Номер телефона" %}</label>
                 {{ form.phone_number }}
               </div>
               <div class="col-6 mb-3">
-                <label for="{{ form.callsign.id_for_label }}" class="form-label">Позывной (необязательно)</label>
+                <label for="{{ form.callsign.id_for_label }}" class="form-label">{% translate "Позывной (необязательно)" %}</label>
                 {{ form.callsign }}
               </div>
             </div>
           {% endif %}
           
           <div class="mb-3">
-            <label class="form-label">Статус участия</label>
+            <label class="form-label">{% translate "Статус участия" %}</label>
             {{ form.participation_status }}
           </div>
           <div class="mb-3">
-            <label class="form-label">Наличие амуниции</label>
+            <label class="form-label">{% translate "Наличие амуниции" %}</label>
             <div class="d-flex gap-4">
               {% for radio in form.has_equipment %}
                 <div class="form-check">
@@ -373,11 +374,11 @@
             </div>
           </div>
           <div class="mb-3">
-            <label for="{{ form.comment.id_for_label }}" class="form-label">Комментарий</label>
+            <label for="{{ form.comment.id_for_label }}" class="form-label">{% translate "Комментарий" %}</label>
             {{ form.comment }}
           </div>
           <button type="submit" class="btn btn-primary w-100">
-            <i class="bi bi-check-circle me-2"></i>Зарегистрироваться
+            <i class="bi bi-check-circle me-2"></i>{% translate "Зарегистрироваться" %}
           </button>
         {% endif %}
       </form>
@@ -386,9 +387,7 @@
         <div class="mt-3 text-center">
           <small class="text-muted">
             <i class="bi bi-info-circle me-1"></i>
-            <a href="{% url 'login' %}">Войдите</a> или 
-            <a href="{% url 'register' %}">зарегистрируйтесь</a>, 
-            чтобы данные подставлялись автоматически
+            {% url 'login' as login_url %}{% url 'register' as register_url %}{% blocktranslate trimmed %}<a href="{{ login_url }}">Войдите</a> или <a href="{{ register_url }}">зарегистрируйтесь</a>, чтобы данные подставлялись автоматически{% endblocktranslate %}
           </small>
         </div>
       {% endif %}
@@ -398,7 +397,7 @@
   <!-- Список участников -->
   <div class="col-lg-7">
     <div class="registrations-list">
-      <h4 class="mb-3">👥 Участники ({{ registrations.count }})</h4>
+      <h4 class="mb-3">{% blocktranslate with num=registrations.count %}👥 Участники ({{ num }}){% endblocktranslate %}</h4>
       
       <!-- Поиск -->
       <form method="get" class="mb-3">
@@ -407,7 +406,7 @@
           <input type="text" 
                  name="search" 
                  class="form-control" 
-                 placeholder="Поиск по имени, фамилии, позывному или телефону..."
+                 placeholder="{% translate 'Поиск по имени, фамилии, позывному или телефону...' %}"
                  value="{{ search_query }}">
           {% if status_filter != 'all' %}
             <input type="hidden" name="status" value="{{ status_filter }}">
@@ -431,14 +430,14 @@
                     {% endif %}
                     {% if reg.user %}
                       <span class="badge bg-primary" style="font-size: 10px;">
-                        <i class="bi bi-check-circle-fill"></i> верифицирован
+                        <i class="bi bi-check-circle-fill"></i> {% translate "верифицирован" %}
                       </span>
                     {% endif %}
                     <br>
                     <small class="text-muted">
                       📱 {{ reg.phone_number }}
                       {% if reg.has_car %}
-                        <span class="badge bg-info">🚗 Есть авто</span>
+                        <span class="badge bg-info">{% translate "🚗 Есть авто" %}</span>
                       {% endif %}
                       <span class="badge bg-secondary">{{ reg.get_has_equipment_display }}</span>
                     </small>
@@ -468,7 +467,7 @@
         <div class="mt-3 pt-2 border-top">
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted">
-              Показано: {{ registrations.count }} из {{ total_count }} участников
+              {% blocktranslate with shown=registrations.count total=total_count %}Показано: {{ shown }} из {{ total }} участников{% endblocktranslate %}
             </small>
             <div class="d-flex gap-2">
               <span class="badge bg-success">✅ {{ yes_count }}</span>
@@ -482,14 +481,14 @@
         <div class="empty-state">
           <span class="icon">📭</span>
           {% if search_query or status_filter != 'all' %}
-            <h5>По вашему запросу ничего не найдено</h5>
-            <p class="text-muted">Попробуйте изменить параметры поиска или фильтрации</p>
+            <h5>{% translate "По вашему запросу ничего не найдено" %}</h5>
+            <p class="text-muted">{% translate "Попробуйте изменить параметры поиска или фильтрации" %}</p>
             <a href="?status=all" class="btn btn-outline-primary btn-sm">
-              <i class="bi bi-arrow-clockwise me-1"></i>Сбросить фильтры
+              <i class="bi bi-arrow-clockwise me-1"></i>{% translate "Сбросить фильтры" %}
             </a>
           {% else %}
-            <h5>Пока никто не зарегистрировался</h5>
-            <p class="text-muted">Будьте первым! Зарегистрируйтесь на игру выше.</p>
+            <h5>{% translate "Пока никто не зарегистрировался" %}</h5>
+            <p class="text-muted">{% translate "Будьте первым! Зарегистрируйтесь на игру выше." %}</p>
           {% endif %}
         </div>
       {% endif %}
@@ -499,7 +498,7 @@
 
 <div class="mt-4">
   <a href="{% url 'catalog_games' %}" class="btn btn-outline-secondary">
-    ← Назад к играм
+    {% translate "← Назад к играм" %}
   </a>
 </div>
 {% endblock %}

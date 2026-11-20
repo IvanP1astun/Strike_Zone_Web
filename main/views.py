@@ -7,6 +7,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.db import models
 
 from .models import (
@@ -98,7 +99,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Регистрация успешно завершена!")
+            messages.success(request, _("Регистрация успешно завершена!"))
             return redirect("home")
     else:
         form = CustomUserCreationForm()
@@ -130,41 +131,41 @@ def catalog(request):
     """Страница каталога с разделами (всегда статичные)"""
     sections = [
         {
-            "name": "Страйкбольные игры",
+            "name": _("Страйкбольные игры"),
             "icon": "🎯",
-            "description": "Расписание, сценарии, регистрация на игры",
+            "description": _("Расписание, сценарии, регистрация на игры"),
             "count": AirsoftGame.objects.filter(is_active=True).count(),
             "url": "catalog_games",
             "color": "#dc3545",
         },
         {
-            "name": "Аксессуары 3D печать",
+            "name": _("Аксессуары 3D печать"),
             "icon": "🖨️",
-            "description": "Индивидуальные детали, апгрейды, кастом",
+            "description": _("Индивидуальные детали, апгрейды, кастом"),
             "count": GunModule.objects.count(),
             "url": "catalog_modules",
             "color": "#fd7e14",
         },
         {
-            "name": "Страйкбольные привода",
+            "name": _("Страйкбольные привода"),
             "icon": "🔫",
-            "description": "AEG, GBB, HPA, снайперские винтовки",
+            "description": _("AEG, GBB, HPA, снайперские винтовки"),
             "count": Gun.objects.count(),
             "url": "catalog_guns",
             "color": "#198754",
         },
         {
-            "name": "Аксессуары для приводов",
+            "name": _("Аксессуары для приводов"),
             "icon": "🧩",
-            "description": "Прицелы, глушители, тактические ручки",
+            "description": _("Прицелы, глушители, тактические ручки"),
             "count": GunAccessory.objects.count(),
             "url": "catalog_accessories",
             "color": "#6f42c1",
         },
         {
-            "name": "Страйкбольное оборудование",
+            "name": _("Страйкбольное оборудование"),
             "icon": "🛡️",
-            "description": "Хронографы, зарядки, аккумуляторы",
+            "description": _("Хронографы, зарядки, аккумуляторы"),
             "count": AirsoftEquipment.objects.count(),
             "url": "catalog_equipment",
             "color": "#0dcaf0",
@@ -195,7 +196,8 @@ def catalog_games(request):
         "catalog/section_list.html",
         {
             "items": games,
-            "title": "Страйкбольные игры",
+            "title": _("Страйкбольные игры"),
+            "is_games": True,
             "icon": "🎯",
             "back_url": "catalog",
         },
@@ -210,7 +212,7 @@ def catalog_modules(request):
         "catalog/section_list.html",
         {
             "items": modules,
-            "title": "Аксессуары 3D печать",
+            "title": _("Аксессуары 3D печать"),
             "icon": "🖨️",
             "back_url": "catalog",
         },
@@ -225,7 +227,7 @@ def catalog_guns(request):
         "catalog/section_list.html",
         {
             "items": guns,
-            "title": "Страйкбольные привода",
+            "title": _("Страйкбольные привода"),
             "icon": "🔫",
             "back_url": "catalog",
         },
@@ -240,7 +242,7 @@ def catalog_accessories(request):
         "catalog/section_list.html",
         {
             "items": accessories,
-            "title": "Аксессуары для приводов",
+            "title": _("Аксессуары для приводов"),
             "icon": "🧩",
             "back_url": "catalog",
         },
@@ -255,7 +257,7 @@ def catalog_equipment(request):
         "catalog/section_list.html",
         {
             "items": equipment,
-            "title": "Страйкбольное оборудование",
+            "title": _("Страйкбольное оборудование"),
             "icon": "🛡️",
             "back_url": "catalog",
         },
@@ -308,7 +310,7 @@ def game_detail(request, game_id):
             form = GameRegistrationEditForm(request.POST, instance=user_registration)
             if form.is_valid():
                 form.save()
-                messages.success(request, "✅ Статус успешно обновлен!")
+                messages.success(request, _("✅ Статус успешно обновлен!"))
                 return redirect("game_detail", game_id=game.id)
         else:
             form = GameRegistrationForm(request.POST, user=request.user, game=game)
@@ -318,7 +320,7 @@ def game_detail(request, game_id):
                 if request.user.is_authenticated:
                     registration.user = request.user
                 registration.save()
-                messages.success(request, "✅ Вы успешно зарегистрировались на игру!")
+                messages.success(request, _("✅ Вы успешно зарегистрировались на игру!"))
                 return redirect("game_detail", game_id=game.id)
             else:
                 for field, errors in form.errors.items():
@@ -356,7 +358,7 @@ def cancel_registration(request, registration_id):
     )
     game_id = registration.game.id
     registration.delete()
-    messages.success(request, "Вы отменили регистрацию на игру")
+    messages.success(request, _("Вы отменили регистрацию на игру"))
     return redirect("game_detail", game_id=game_id)
 
 
@@ -387,7 +389,7 @@ def profile(request):
         form = ProfileForm(request.POST, request.FILES, instance=profile, user=user)
         if form.is_valid():
             form.save(user=user)
-            messages.success(request, "Профиль успешно обновлен!")
+            messages.success(request, _("Профиль успешно обновлен!"))
             return redirect("profile")
     else:
         form = ProfileForm(instance=profile, user=user)
@@ -415,13 +417,16 @@ def game_create(request):
             game = form.save(commit=False)
             game.created_by = request.user
             game.save()
-            messages.success(request, f'✅ Игра "{game.name}" успешно создана!')
+            messages.success(
+                request,
+                _('✅ Игра "%(name)s" успешно создана!') % {"name": game.name},
+            )
             return redirect('game_detail', game_id=game.id)
     else:
         form = GameCreateForm()
     
     return render(request, 'catalog/game_create.html', {
         'form': form,
-        'title': 'Создание игры',
+        'title': _('Создание игры'),
         'icon': '➕',
     })

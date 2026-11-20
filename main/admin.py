@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
 from .models import (
     News,
@@ -15,7 +16,7 @@ from .models import (
 )
 
 
-admin.site.empty_value_display = 'Не задано'
+admin.site.empty_value_display = _('Не задано')
 
 
 @admin.register(News)
@@ -81,7 +82,7 @@ class CatalogAdmin(admin.ModelAdmin):
     def get_tags(self, obj):
         """Метод должен быть внутри класса CatalogAdmin"""
         return ", ".join([tag.name for tag in obj.tags.all()])
-    get_tags.short_description = 'Теги'
+    get_tags.short_description = _('Теги')
 
 
 @admin.register(AirsoftGame)
@@ -133,16 +134,16 @@ class ProfileAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
     list_editable = ['role']
     fieldsets = (
-        ('Пользователь', {
+        (_('Пользователь'), {
             'fields': ('user',)
         }),
-        ('Личная информация', {
+        (_('Личная информация'), {
             'fields': ('avatar', 'first_name', 'last_name', 'phone_number', 'birth_date', 'callsign')
         }),
-        ('Права и роли', {
+        (_('Права и роли'), {
             'fields': ('role',)
         }),
-        ('Дополнительно', {
+        (_('Дополнительно'), {
             'fields': ('bio', 'created_at', 'updated_at')
         }),
     )

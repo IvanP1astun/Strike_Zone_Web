@@ -80,6 +80,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # Picks the interface language from the cookie / Accept-Language header.
+    # Must be after SessionMiddleware and before CommonMiddleware.
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -135,7 +138,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'ru-RU'
+# Russian is the source language of all strings in the code and templates;
+# English and Japanese are provided as translations in locale/.
+LANGUAGE_CODE = 'ru'
+
+LANGUAGES = [
+    ('ru', 'Русский'),
+    ('en', 'English'),
+    ('ja', '日本語'),
+]
+
+LOCALE_PATHS = [BASE_DIR / 'locale']
+
+LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365  # remember the choice for a year
 
 TIME_ZONE = 'Europe/Moscow'
 

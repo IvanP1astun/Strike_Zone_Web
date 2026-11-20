@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
-{% block title %}Вход{% endblock %}
+{% load i18n %}
+{% block title %}{% translate "Вход" %}{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -7,7 +8,7 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Вход в систему</h4>
+                    <h4 class="mb-0">{% translate "Вход в систему" %}</h4>
                 </div>
                 <div class="card-body">
                     <form method="post">
@@ -30,11 +31,11 @@
                         {% endfor %}
                         
                         <button type="submit" class="btn btn-primary w-100">
-                            Войти
+                            {% translate "Войти" %}
                         </button>
                     </form>
                     <div class="mt-3 text-center">
-                        <p>Нет аккаунта? <a href="{% url 'register' %}">Зарегистрироваться</a></p>
+                        <p>{% translate "Нет аккаунта?" %} <a href="{% url 'register' %}">{% translate "Зарегистрироваться" %}</a></p>
                     </div>
                 </div>
             </div>

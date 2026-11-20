@@ -1,6 +1,7 @@
-{% load static %}
+{% load static i18n %}
+{% get_current_language as LANGUAGE_CODE %}
 <!doctype html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE }}">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,7 +30,7 @@
             type="button"
             class="btn-close"
             data-bs-dismiss="alert"
-            aria-label="Close"
+            aria-label="{% translate 'Закрыть' %}"
           ></button>
         </div>
         {% endfor %} {% endif %} {% block content %}{% endblock %}

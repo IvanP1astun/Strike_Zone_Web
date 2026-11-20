@@ -1,15 +1,16 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}
-  Главная страница
+  {% translate "Главная страница" %}
 {% endblock %}
 
 {% block content %}
-  <h1>Главная страница</h1>
-  <p>Лента</p>
+  <h1>{% translate "Главная страница" %}</h1>
+  <p>{% translate "Лента" %}</p>
   
   {% if user.is_staff or user.is_superuser or user.groups.all %}
     <div class="mb-3">
-      <a href="{% url 'news_create' %}" class="btn btn-primary">Добавить новость</a>
+      <a href="{% url 'news_create' %}" class="btn btn-primary">{% translate "Добавить новость" %}</a>
     </div>
   {% endif %}
   
@@ -22,12 +23,12 @@
         {% endif %}
         <p>{{ news.content|linebreaks }}</p>
         <small style="color: #666;">
-          Автор: {{ news.author.username }} | 
-          Дата: {{ news.created_at|date:"d.m.Y H:i" }}
+          {% translate "Автор:" %} {{ news.author.username }} | 
+          {% translate "Дата:" %} {{ news.created_at|date:"d.m.Y H:i" }}
         </small>
       </div>
     {% empty %}
-      <p>Новостей пока нет.</p>
+      <p>{% translate "Новостей пока нет." %}</p>
     {% endfor %}
   </div>
 {% endblock %}
