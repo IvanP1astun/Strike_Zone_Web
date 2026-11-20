@@ -4,6 +4,7 @@ from django.db.models import UniqueConstraint
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from PIL import Image
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
@@ -14,27 +15,27 @@ User = get_user_model()
 
 
 class News(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Заголовок")
-    content = models.TextField(verbose_name="Содержание")
-    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Автор")
+    title = models.CharField(max_length=200, verbose_name=_("Заголовок"))
+    content = models.TextField(verbose_name=_("Содержание"))
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name=_("Автор"))
     created_at = models.DateTimeField(
-        default=timezone.now, verbose_name="Дата создания"
+        default=timezone.now, verbose_name=_("Дата создания")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-    is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Дата обновления"))
+    is_published = models.BooleanField(default=True, verbose_name=_("Опубликовано"))
 
     image = models.ImageField(
         upload_to="news/",
-        verbose_name="Изображение",
+        verbose_name=_("Изображение"),
         blank=True,
         null=True,
-        help_text="Загрузите картинку к новости (необязательно)"
+        help_text=_("Загрузите картинку к новости (необязательно)")
     )
 
     class Meta:
         ordering = ["-created_at"]
-        verbose_name = "Новость"
-        verbose_name_plural = "Новости"
+        verbose_name = _("Новость")
+        verbose_name_plural = _("Новости")
 
     def __str__(self):
         return self.title
@@ -45,60 +46,60 @@ class Profile(models.Model):
 
     # Роли пользователей
     ROLE_CHOICES = [
-        ('player', 'Игрок'),
-        ('commander', 'Командир'),
-        ('admin', 'Администратор'),
+        ('player', _('Игрок')),
+        ('commander', _('Командир')),
+        ('admin', _('Администратор')),
     ]
 
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
         related_name="profile",
-        verbose_name="Пользователь",
+        verbose_name=_("Пользователь"),
     )
 
     # Аватар
     avatar = models.ImageField(
-        upload_to="avatars/", verbose_name="Аватар", blank=True, null=True
+        upload_to="avatars/", verbose_name=_("Аватар"), blank=True, null=True
     )
 
     # День рождения
-    birth_date = models.DateField(verbose_name="День рождения", blank=True, null=True)
+    birth_date = models.DateField(verbose_name=_("День рождения"), blank=True, null=True)
 
     # Позывной (уже есть в GameRegistration, но добавим и в профиль)
     callsign = models.CharField(
         max_length=100,
-        verbose_name="Позывной",
+        verbose_name=_("Позывной"),
         blank=True,
-        help_text="Ваш позывной на играх",
+        help_text=_("Ваш позывной на играх"),
     )
 
     # Дополнительная информация
     bio = models.TextField(
-        verbose_name="О себе", blank=True, help_text="Краткая информация о себе"
+        verbose_name=_("О себе"), blank=True, help_text=_("Краткая информация о себе")
     )
 
     # Телефон (дублируем для профиля)
     phone_number = models.CharField(
-        max_length=20, verbose_name="Номер телефона", blank=True
+        max_length=20, verbose_name=_("Номер телефона"), blank=True
     )
 
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
         default='player',
-        verbose_name='Роль'
+        verbose_name=_('Роль')
     )
 
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Дата создания"))
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Дата обновления"))
 
     class Meta:
-        verbose_name = "Профиль пользователя"
-        verbose_name_plural = "Профили пользователей"
+        verbose_name = _("Профиль пользователя")
+        verbose_name_plural = _("Профили пользователей")
 
     def __str__(self):
-        return f"Профиль {self.user.username}"
+        return _("Профиль %(username)s") % {"username": self.user.username}
 
     @property
     def full_name(self):
@@ -140,8 +141,8 @@ class Tag(models.Model):
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
         unique=True,
-        help_text="Тег",
-        verbose_name="Тег",
+        help_text=_("Тег"),
+        verbose_name=_("Тег"),
     )
     slug = models.SlugField(
         unique=True,
@@ -150,8 +151,8 @@ class Tag(models.Model):
     )
 
     class Meta:
-        verbose_name = "Тег"
-        verbose_name_plural = "Теги"
+        verbose_name = _("Тег")
+        verbose_name_plural = _("Теги")
         ordering = ["name"]
 
     def __str__(self):
@@ -164,24 +165,24 @@ class Gun(models.Model):
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
         unique=True,
-        help_text="Страйбольное оружие",
-        verbose_name="Страйбольное оружие",
+        help_text=_("Страйбольное оружие"),
+        verbose_name=_("Страйбольное оружие"),
     )
-    model = models.CharField(max_length=100, verbose_name="Модель", blank=True)
-    brand = models.CharField(max_length=100, verbose_name="Бренд", blank=True)
+    model = models.CharField(max_length=100, verbose_name=_("Модель"), blank=True)
+    brand = models.CharField(max_length=100, verbose_name=_("Бренд"), blank=True)
     # НОВЫЕ ПОЛЯ
-    description = models.TextField(verbose_name="Описание", blank=True)
+    description = models.TextField(verbose_name=_("Описание"), blank=True)
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Цена", null=True, blank=True
+        max_digits=10, decimal_places=2, verbose_name=_("Цена"), null=True, blank=True
     )
-    in_stock = models.BooleanField(default=True, verbose_name="В наличии")
+    in_stock = models.BooleanField(default=True, verbose_name=_("В наличии"))
     image = models.ImageField(
-        upload_to="guns/", verbose_name="Изображение", blank=True, null=True
+        upload_to="guns/", verbose_name=_("Изображение"), blank=True, null=True
     )
 
     class Meta:
-        verbose_name = "Страйбольное привод"
-        verbose_name_plural = "Страйбольные привода"
+        verbose_name = _("Страйбольное привод")
+        verbose_name_plural = _("Страйбольные привода")
         ordering = ["name"]
 
     def __str__(self):
@@ -189,87 +190,87 @@ class Gun(models.Model):
 
 
 class AirsoftEquipment(models.Model):
-    name = models.CharField(max_length=200, verbose_name="Название")
-    description = models.TextField(verbose_name="Описание", blank=True)
+    name = models.CharField(max_length=200, verbose_name=_("Название"))
+    description = models.TextField(verbose_name=_("Описание"), blank=True)
     # НОВЫЕ ПОЛЯ
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Цена", null=True, blank=True
+        max_digits=10, decimal_places=2, verbose_name=_("Цена"), null=True, blank=True
     )
-    in_stock = models.BooleanField(default=True, verbose_name="В наличии")
+    in_stock = models.BooleanField(default=True, verbose_name=_("В наличии"))
     image = models.ImageField(
-        upload_to="equipment/", verbose_name="Изображение", blank=True, null=True
+        upload_to="equipment/", verbose_name=_("Изображение"), blank=True, null=True
     )
     category = models.CharField(
         max_length=100,
-        verbose_name="Категория",
+        verbose_name=_("Категория"),
         blank=True,
         choices=[
-            ("chrono", "Хронограф"),
-            ("charger", "Зарядное устройство"),
-            ("battery", "Аккумулятор"),
-            ("other", "Другое"),
+            ("chrono", _("Хронограф")),
+            ("charger", _("Зарядное устройство")),
+            ("battery", _("Аккумулятор")),
+            ("other", _("Другое")),
         ],
         default="other",
     )
 
     class Meta:
-        verbose_name = "Страйбольное оборудование"
-        verbose_name_plural = "Страйбольное оборудование"
+        verbose_name = _("Страйбольное оборудование")
+        verbose_name_plural = _("Страйбольное оборудование")
 
     def __str__(self):
         return self.name
 
 
 class GunAccessory(models.Model):
-    name = models.CharField(max_length=200, verbose_name="Название")
-    type = models.CharField(max_length=100, verbose_name="Тип аксессуара", blank=True)
+    name = models.CharField(max_length=200, verbose_name=_("Название"))
+    type = models.CharField(max_length=100, verbose_name=_("Тип аксессуара"), blank=True)
     # НОВЫЕ ПОЛЯ
-    description = models.TextField(verbose_name="Описание", blank=True)
+    description = models.TextField(verbose_name=_("Описание"), blank=True)
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Цена", null=True, blank=True
+        max_digits=10, decimal_places=2, verbose_name=_("Цена"), null=True, blank=True
     )
-    in_stock = models.BooleanField(default=True, verbose_name="В наличии")
+    in_stock = models.BooleanField(default=True, verbose_name=_("В наличии"))
     image = models.ImageField(
-        upload_to="accessories/", verbose_name="Изображение", blank=True, null=True
+        upload_to="accessories/", verbose_name=_("Изображение"), blank=True, null=True
     )
 
     class Meta:
-        verbose_name = "Аксессуар для привода"
-        verbose_name_plural = "Аксессуары для приводов"
+        verbose_name = _("Аксессуар для привода")
+        verbose_name_plural = _("Аксессуары для приводов")
 
     def __str__(self):
         return self.name
 
 
 class GunModule(models.Model):
-    name = models.CharField(max_length=200, verbose_name="Название")
-    description = models.TextField(verbose_name="Описание", blank=True)
-    file_url = models.URLField(verbose_name="Ссылка на файл", blank=True)
+    name = models.CharField(max_length=200, verbose_name=_("Название"))
+    description = models.TextField(verbose_name=_("Описание"), blank=True)
+    file_url = models.URLField(verbose_name=_("Ссылка на файл"), blank=True)
     # НОВЫЕ ПОЛЯ
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, verbose_name="Цена", null=True, blank=True
+        max_digits=10, decimal_places=2, verbose_name=_("Цена"), null=True, blank=True
     )
-    in_stock = models.BooleanField(default=True, verbose_name="В наличии")
+    in_stock = models.BooleanField(default=True, verbose_name=_("В наличии"))
     image = models.ImageField(
-        upload_to="modules/", verbose_name="Изображение", blank=True, null=True
+        upload_to="modules/", verbose_name=_("Изображение"), blank=True, null=True
     )
     material = models.CharField(
         max_length=100,
-        verbose_name="Материал",
+        verbose_name=_("Материал"),
         blank=True,
         choices=[
             ("pla", "PLA"),
             ("petg", "PETG"),
             ("abs", "ABS"),
-            ("nylon", "Нейлон"),
-            ("other", "Другое"),
+            ("nylon", _("Нейлон")),
+            ("other", _("Другое")),
         ],
         default="pla",
     )
 
     class Meta:
-        verbose_name = "3D модуль"
-        verbose_name_plural = "3D модули"
+        verbose_name = _("3D модуль")
+        verbose_name_plural = _("3D модули")
 
     def __str__(self):
         return self.name
@@ -278,28 +279,28 @@ class GunModule(models.Model):
 class Catalog(models.Model):
     """Каталог"""
 
-    name = models.CharField(max_length=200, verbose_name="Название")
-    description = models.TextField(verbose_name="Описание")
-    tags = models.ManyToManyField("Tag", blank=True, verbose_name="Тэги")
+    name = models.CharField(max_length=200, verbose_name=_("Название"))
+    description = models.TextField(verbose_name=_("Описание"))
+    tags = models.ManyToManyField("Tag", blank=True, verbose_name=_("Тэги"))
     guns = models.ManyToManyField(
-        "Gun", blank=True, verbose_name="Страйбольные привода"
+        "Gun", blank=True, verbose_name=_("Страйбольные привода")
     )
     airsoft_equipment = models.ManyToManyField(
-        "AirsoftEquipment", blank=True, verbose_name="Страйбольное оборудование"
+        "AirsoftEquipment", blank=True, verbose_name=_("Страйбольное оборудование")
     )
     airsoft_games = models.ManyToManyField(
-        "AirsoftGame", blank=True, verbose_name="Страйбольные игры"
+        "AirsoftGame", blank=True, verbose_name=_("Страйбольные игры")
     )
     guns_accessories = models.ManyToManyField(
-        "GunAccessory", blank=True, verbose_name="Страйбольные аксессуары"
+        "GunAccessory", blank=True, verbose_name=_("Страйбольные аксессуары")
     )
     guns_modules = models.ManyToManyField(
-        "GunModule", blank=True, verbose_name="Страйбольные модули"
+        "GunModule", blank=True, verbose_name=_("Страйбольные модули")
     )
 
     class Meta:
-        verbose_name = "Каталог"
-        verbose_name_plural = "Каталоги"
+        verbose_name = _("Каталог")
+        verbose_name_plural = _("Каталоги")
         ordering = ["name"]
 
     def __str__(self):
@@ -310,17 +311,17 @@ class AirsoftGame(models.Model):
     """Страйкбольные игры"""
 
     STATUS_CHOICES = [
-        ('upcoming', 'Предстоит'),
-        ('ongoing', 'Идёт'),
-        ('finished', 'Завершена'),
-        ('archived', 'Архивирована'),
+        ('upcoming', _('Предстоит')),
+        ('ongoing', _('Идёт')),
+        ('finished', _('Завершена')),
+        ('archived', _('Архивирована')),
     ]
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default='upcoming',
-        verbose_name='Статус'
+        verbose_name=_('Статус')
     )
 
     created_by = models.ForeignKey(
@@ -329,19 +330,19 @@ class AirsoftGame(models.Model):
         null=True,
         blank=True,
         related_name='created_games',
-        verbose_name='Создатель'
+        verbose_name=_('Создатель')
     )
 
     finished_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name='Дата завершения'
+        verbose_name=_('Дата завершения')
     )
 
     archived_at = models.DateTimeField(
         null=True,
         blank=True,
-        verbose_name='Дата архивации'
+        verbose_name=_('Дата архивации')
     )
 
     def update_status(self):
@@ -367,38 +368,38 @@ class AirsoftGame(models.Model):
     name = models.CharField(
         max_length=MAX_NAME_LENGTH,
         unique=True,
-        help_text="Страйкбольная игра",
-        verbose_name="Страйкбольные игры",
+        help_text=_("Страйкбольная игра"),
+        verbose_name=_("Страйкбольные игры"),
     )
     date = models.DateField(
-        verbose_name="Дата игры",
+        verbose_name=_("Дата игры"),
     )
     # НОВЫЕ ПОЛЯ
-    description = models.TextField(verbose_name="Описание", blank=True)
+    description = models.TextField(verbose_name=_("Описание"), blank=True)
     location = models.CharField(
-        max_length=200, verbose_name="Место проведения", blank=True
+        max_length=200, verbose_name=_("Место проведения"), blank=True
     )
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        verbose_name="Стоимость участия",
+        verbose_name=_("Стоимость участия"),
         null=True,
         blank=True,
     )
     max_players = models.PositiveIntegerField(
-        verbose_name="Максимум игроков", default=30
+        verbose_name=_("Максимум игроков"), default=30
     )
     registered_players = models.PositiveIntegerField(
-        verbose_name="Зарегистрировано игроков", default=0
+        verbose_name=_("Зарегистрировано игроков"), default=0
     )
     image = models.ImageField(
-        upload_to="games/", verbose_name="Изображение", blank=True, null=True
+        upload_to="games/", verbose_name=_("Изображение"), blank=True, null=True
     )
-    is_active = models.BooleanField(default=True, verbose_name="Активна")
+    is_active = models.BooleanField(default=True, verbose_name=_("Активна"))
 
     class Meta:
-        verbose_name = "Страйкбольная игра"
-        verbose_name_plural = "Страйкбольные игры"
+        verbose_name = _("Страйкбольная игра")
+        verbose_name_plural = _("Страйкбольные игры")
         ordering = ["date"]
 
     def __str__(self):
@@ -427,27 +428,27 @@ class GameRegistration(models.Model):
         null=True,
         blank=True,
         related_name='game_registrations',
-        verbose_name='Пользователь'
+        verbose_name=_('Пользователь')
     )
 
     # Статус участия
     STATUS_CHOICES = [
-        ("yes", "Да, приеду"),
-        ("no", "Нет, не приеду"),
-        ("unknown", "Неизвестно"),
+        ("yes", _("Да, приеду")),
+        ("no", _("Нет, не приеду")),
+        ("unknown", _("Неизвестно")),
     ]
 
     # Наличие амуниции
     EQUIPMENT_CHOICES = [
-        ("yes", "Есть своя"),
-        ("no", "Нет, нужна аренда"),
+        ("yes", _("Есть своя")),
+        ("no", _("Нет, нужна аренда")),
     ]
 
     game = models.ForeignKey(
         "AirsoftGame",
         on_delete=models.CASCADE,
         related_name="registrations",
-        verbose_name="Игра",
+        verbose_name=_("Игра"),
     )
 
     # Связь с пользователем (опционально - для авторизованных)
@@ -457,18 +458,18 @@ class GameRegistration(models.Model):
         null=True,
         blank=True,
         related_name="game_registrations",
-        verbose_name="Пользователь",
+        verbose_name=_("Пользователь"),
     )
 
     # Основная информация
-    first_name = models.CharField(max_length=100, verbose_name="Имя")
-    last_name = models.CharField(max_length=100, verbose_name="Фамилия")
-    phone_number = models.CharField(max_length=20, verbose_name="Номер телефона")
+    first_name = models.CharField(max_length=100, verbose_name=_("Имя"))
+    last_name = models.CharField(max_length=100, verbose_name=_("Фамилия"))
+    phone_number = models.CharField(max_length=20, verbose_name=_("Номер телефона"))
     callsign = models.CharField(
         max_length=100,
-        verbose_name="Позывной",
+        verbose_name=_("Позывной"),
         blank=True,
-        help_text="Необязательное поле",
+        help_text=_("Необязательное поле"),
     )
 
     # Статусы
@@ -476,26 +477,26 @@ class GameRegistration(models.Model):
         max_length=10,
         choices=STATUS_CHOICES,
         default="unknown",
-        verbose_name="Статус участия",
+        verbose_name=_("Статус участия"),
     )
-    has_car = models.BooleanField(default=False, verbose_name="Есть автомобиль")
+    has_car = models.BooleanField(default=False, verbose_name=_("Есть автомобиль"))
     has_equipment = models.CharField(
         max_length=10,
         choices=EQUIPMENT_CHOICES,
         default="no",
-        verbose_name="Наличие амуниции",
+        verbose_name=_("Наличие амуниции"),
     )
 
     # Дополнительно
-    comment = models.TextField(verbose_name="Комментарий", blank=True)
+    comment = models.TextField(verbose_name=_("Комментарий"), blank=True)
     registered_at = models.DateTimeField(
-        auto_now_add=True, verbose_name="Дата регистрации"
+        auto_now_add=True, verbose_name=_("Дата регистрации")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("Дата обновления"))
 
     class Meta:
-        verbose_name = "Регистрация на игру"
-        verbose_name_plural = "Регистрации на игры"
+        verbose_name = _("Регистрация на игру")
+        verbose_name_plural = _("Регистрации на игры")
         ordering = ["-registered_at"]
 
     def __str__(self):
@@ -519,11 +520,11 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        verbose_name="Пользователь",
+        verbose_name=_("Пользователь"),
         related_name="user_favorites",
     )
     airsoft_gun = models.ForeignKey(
-        Gun, on_delete=models.CASCADE, verbose_name="Страйбольное оружие"
+        Gun, on_delete=models.CASCADE, verbose_name=_("Страйбольное оружие")
     )
 
     class Meta:
@@ -533,8 +534,8 @@ class Favorite(models.Model):
                 name="unique_favorite",
             )
         ]
-        verbose_name = "Избранное"
-        verbose_name_plural = "Избранные"
+        verbose_name = _("Избранное")
+        verbose_name_plural = _("Избранные")
 
     def __str__(self):
         return f"{self.user.username} - {self.airsoft_gun.name}"
@@ -559,7 +560,7 @@ def create_groups():
         'can_view_game': 'Может просматривать игры',
     }
     for codename, name in permissions_map.items():
-        permission, _ = Permission.objects.get_or_create(
+        permission, _created = Permission.objects.get_or_create(
             codename=codename,
             name=name,
             content_type=game_content_type
@@ -567,7 +568,7 @@ def create_groups():
         organizer_group.permissions.add(permission)
     # Добавляем права на просмотр профилей (если нужно)
     profile_content_type = ContentType.objects.get_for_model(Profile)
-    view_profile_permission, _ = Permission.objects.get_or_create(
+    view_profile_permission, _created = Permission.objects.get_or_create(
         codename='can_view_profile',
         name='Может просматривать профили',
         content_type=profile_content_type

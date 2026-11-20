@@ -56,6 +56,8 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Lint with flake8
         run: python -m flake8 main/ strikezoneweb/
+      - name: Check translations (all strings translated, .mo up to date)
+        run: python scripts/translations.py check
       - name: Check that all model changes have migrations
         run: python manage.py makemigrations --check --dry-run
       - name: Run tests with pytest

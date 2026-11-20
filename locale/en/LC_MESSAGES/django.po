@@ -1,0 +1,719 @@
+msgid ""
+msgstr "Project-Id-Version: Strike Zone\nLanguage: en\nMIME-Version: 1.0\nContent-Type: text/plain; charset=UTF-8\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Не задано"
+msgstr "Not set"
+
+msgid "Теги"
+msgstr "Tags"
+
+msgid "Пользователь"
+msgstr "User"
+
+msgid "Личная информация"
+msgstr "Personal information"
+
+msgid "Права и роли"
+msgstr "Permissions and roles"
+
+msgid "Дополнительно"
+msgstr "Additional"
+
+msgid "Главная"
+msgstr "Home"
+
+msgid "Заголовок"
+msgstr "Title"
+
+msgid "Содержание"
+msgstr "Content"
+
+msgid "Изображение (необязательно)"
+msgstr "Image (optional)"
+
+msgid "Опубликовать"
+msgstr "Publish"
+
+msgid "Название игры"
+msgstr "Game name"
+
+msgid "Дата проведения"
+msgstr "Game date"
+
+msgid "Описание"
+msgstr "Description"
+
+msgid "Место проведения"
+msgstr "Location"
+
+msgid "Стоимость участия (₽)"
+msgstr "Participation fee (₽)"
+
+msgid "Максимум игроков"
+msgstr "Maximum players"
+
+msgid "Игра активна (видна на сайте)"
+msgstr "Game is active (visible on the site)"
+
+msgid "Имя"
+msgstr "First name"
+
+msgid "Фамилия"
+msgstr "Last name"
+
+msgid "Номер телефона"
+msgstr "Phone number"
+
+msgid "Позывной (необязательно)"
+msgstr "Callsign (optional)"
+
+msgid "Статус участия"
+msgstr "Participation status"
+
+msgid "У меня есть автомобиль"
+msgstr "I have a car"
+
+msgid "Наличие амуниции"
+msgstr "Gear availability"
+
+msgid "Комментарий"
+msgstr "Comment"
+
+msgid "Аватар"
+msgstr "Avatar"
+
+msgid "День рождения"
+msgstr "Birthday"
+
+msgid "Позывной"
+msgstr "Callsign"
+
+msgid "О себе"
+msgstr "About me"
+
+msgid "Дата игры не может быть в прошлом!"
+msgstr "The game date cannot be in the past!"
+
+msgid "❌ Этот номер телефона уже зарегистрирован на эту игру. Пожалуйста, используйте другой номер или войдите в аккаунт, которым вы регистрировались."
+msgstr "❌ This phone number is already registered for this game. Please use a different number or sign in to the account you registered with."
+
+msgid "Пароль"
+msgstr "Password"
+
+msgid "Подтверждение пароля"
+msgstr "Password confirmation"
+
+msgid "Имя пользователя"
+msgstr "Username"
+
+msgid "Заголовок новости"
+msgstr "News title"
+
+msgid "Текст новости..."
+msgstr "News text..."
+
+msgid "Описание игры..."
+msgstr "Game description..."
+
+msgid "Стоимость участия"
+msgstr "Participation fee"
+
+msgid "Введите имя"
+msgstr "Enter your first name"
+
+msgid "Введите фамилию"
+msgstr "Enter your last name"
+
+msgid "Ваш позывной (необязательно)"
+msgstr "Your callsign (optional)"
+
+msgid "Дополнительная информация..."
+msgstr "Additional information..."
+
+msgid "Ваш позывной"
+msgstr "Your callsign"
+
+msgid "Расскажите о себе..."
+msgstr "Tell us about yourself..."
+
+msgid "Новость"
+msgstr "News item"
+
+msgid "Новости"
+msgstr "News"
+
+msgid "Профиль пользователя"
+msgstr "User profile"
+
+msgid "Профили пользователей"
+msgstr "User profiles"
+
+msgid "Тег"
+msgstr "Tag"
+
+msgid "Страйбольное привод"
+msgstr "Airsoft AEG"
+
+msgid "Страйбольные привода"
+msgstr "Airsoft AEGs"
+
+msgid "Страйбольное оборудование"
+msgstr "Airsoft equipment"
+
+msgid "Аксессуар для привода"
+msgstr "AEG accessory"
+
+msgid "Аксессуары для приводов"
+msgstr "AEG accessories"
+
+msgid "3D модуль"
+msgstr "3D module"
+
+msgid "3D модули"
+msgstr "3D modules"
+
+msgid "Каталог"
+msgstr "Catalog"
+
+msgid "Каталоги"
+msgstr "Catalogs"
+
+msgid "Страйкбольная игра"
+msgstr "Airsoft game"
+
+msgid "Страйкбольные игры"
+msgstr "Airsoft games"
+
+msgid "Регистрация на игру"
+msgstr "Game registration"
+
+msgid "Регистрации на игры"
+msgstr "Game registrations"
+
+msgid "Избранное"
+msgstr "Favorite"
+
+msgid "Избранные"
+msgstr "Favorites"
+
+msgid "Автор"
+msgstr "Author"
+
+msgid "Дата создания"
+msgstr "Created at"
+
+msgid "Дата обновления"
+msgstr "Updated at"
+
+msgid "Опубликовано"
+msgstr "Published"
+
+msgid "Изображение"
+msgstr "Image"
+
+msgid "Загрузите картинку к новости (необязательно)"
+msgstr "Upload a picture for the news item (optional)"
+
+msgid "Игрок"
+msgstr "Player"
+
+msgid "Командир"
+msgstr "Commander"
+
+msgid "Администратор"
+msgstr "Administrator"
+
+msgid "Ваш позывной на играх"
+msgstr "Your callsign in games"
+
+msgid "Краткая информация о себе"
+msgstr "A short bio"
+
+msgid "Роль"
+msgstr "Role"
+
+msgid "Профиль %(username)s"
+msgstr "Profile of %(username)s"
+
+msgid "Страйбольное оружие"
+msgstr "Airsoft gun"
+
+msgid "Модель"
+msgstr "Model"
+
+msgid "Бренд"
+msgstr "Brand"
+
+msgid "Цена"
+msgstr "Price"
+
+msgid "В наличии"
+msgstr "In stock"
+
+msgid "Название"
+msgstr "Name"
+
+msgid "Категория"
+msgstr "Category"
+
+msgid "Тип аксессуара"
+msgstr "Accessory type"
+
+msgid "Ссылка на файл"
+msgstr "File link"
+
+msgid "Материал"
+msgstr "Material"
+
+msgid "Тэги"
+msgstr "Tags"
+
+msgid "Страйбольные игры"
+msgstr "Airsoft games"
+
+msgid "Страйбольные аксессуары"
+msgstr "Airsoft accessories"
+
+msgid "Страйбольные модули"
+msgstr "Airsoft modules"
+
+msgid "Предстоит"
+msgstr "Upcoming"
+
+msgid "Идёт"
+msgstr "In progress"
+
+msgid "Завершена"
+msgstr "Finished"
+
+msgid "Архивирована"
+msgstr "Archived"
+
+msgid "Статус"
+msgstr "Status"
+
+msgid "Создатель"
+msgstr "Created by"
+
+msgid "Дата завершения"
+msgstr "Finished at"
+
+msgid "Дата архивации"
+msgstr "Archived at"
+
+msgid "Дата игры"
+msgstr "Game date"
+
+msgid "Зарегистрировано игроков"
+msgstr "Registered players"
+
+msgid "Активна"
+msgstr "Active"
+
+msgid "Да, приеду"
+msgstr "Yes, I will come"
+
+msgid "Нет, не приеду"
+msgstr "No, I will not come"
+
+msgid "Неизвестно"
+msgstr "Unknown"
+
+msgid "Есть своя"
+msgstr "I have my own"
+
+msgid "Нет, нужна аренда"
+msgstr "No, I need to rent"
+
+msgid "Игра"
+msgstr "Game"
+
+msgid "Необязательное поле"
+msgstr "Optional field"
+
+msgid "Есть автомобиль"
+msgstr "Has a car"
+
+msgid "Дата регистрации"
+msgstr "Registered at"
+
+msgid "Хронограф"
+msgstr "Chronograph"
+
+msgid "Зарядное устройство"
+msgstr "Charger"
+
+msgid "Аккумулятор"
+msgstr "Battery"
+
+msgid "Другое"
+msgstr "Other"
+
+msgid "Нейлон"
+msgstr "Nylon"
+
+msgid "Закрыть"
+msgstr "Close"
+
+msgid "Разделов пока нет"
+msgstr "There are no sections yet"
+
+msgid "Скоро здесь появятся интересные товары"
+msgstr "Interesting products will appear here soon"
+
+msgid "← На главную"
+msgstr "← Back to home"
+
+msgid "%(total)s товаров в %(sections_count)s разделах"
+msgstr "%(total)s items in %(sections_count)s sections"
+
+msgid "%(num)s позиций"
+msgstr "%(num)s items"
+
+msgid "Создание новой игры"
+msgstr "Create a new game"
+
+msgid "Создать игру"
+msgstr "Create game"
+
+msgid "Отмена"
+msgstr "Cancel"
+
+msgid "✅ Приедут"
+msgstr "✅ Coming"
+
+msgid "❌ Не приедут"
+msgstr "❌ Not coming"
+
+msgid "❓ Неизвестно"
+msgstr "❓ Unknown"
+
+msgid "Сбросить фильтры"
+msgstr "Reset filters"
+
+msgid "✏️ Редактировать регистрацию"
+msgstr "✏️ Edit registration"
+
+msgid "📝 Регистрация на игру"
+msgstr "📝 Game registration"
+
+msgid "Пожалуйста, исправьте ошибки:"
+msgstr "Please correct the errors:"
+
+msgid "Данные из вашего профиля автоматически подставлены в форму."
+msgstr "Data from your profile has been filled into the form automatically."
+
+msgid "Вы уже зарегистрированы на эту игру. Измените статус ниже."
+msgstr "You are already registered for this game. Change your status below."
+
+msgid "Обновить статус"
+msgstr "Update status"
+
+msgid "Вы уверены, что хотите отменить регистрацию?"
+msgstr "Are you sure you want to cancel your registration?"
+
+msgid "Из профиля"
+msgstr "From profile"
+
+msgid "Зарегистрироваться"
+msgstr "Register"
+
+msgid "Поиск по имени, фамилии, позывному или телефону..."
+msgstr "Search by first name, last name, callsign or phone..."
+
+msgid "верифицирован"
+msgstr "verified"
+
+msgid "🚗 Есть авто"
+msgstr "🚗 Has a car"
+
+msgid "По вашему запросу ничего не найдено"
+msgstr "Nothing was found for your query"
+
+msgid "Попробуйте изменить параметры поиска или фильтрации"
+msgstr "Try changing the search or filter settings"
+
+msgid "Пока никто не зарегистрировался"
+msgstr "Nobody has registered yet"
+
+msgid "Будьте первым! Зарегистрируйтесь на игру выше."
+msgstr "Be the first! Register for the game above."
+
+msgid "← Назад к играм"
+msgstr "← Back to games"
+
+msgid "<a href=\"%(login_url)s\">Войдите</a> или <a href=\"%(register_url)s\">зарегистрируйтесь</a>, чтобы данные подставлялись автоматически"
+msgstr "<a href=\"%(login_url)s\">Sign in</a> or <a href=\"%(register_url)s\">register</a> so your details are filled in automatically"
+
+msgid "👥 Участники (%(num)s)"
+msgstr "👥 Participants (%(num)s)"
+
+msgid "Показано: %(shown)s из %(total)s участников"
+msgstr "Showing %(shown)s of %(total)s participants"
+
+msgid "Мест нет"
+msgstr "No spots left"
+
+msgid "Нет в наличии"
+msgstr "Out of stock"
+
+msgid "В этом разделе пока пусто"
+msgstr "This section is empty for now"
+
+msgid "Но мы работаем над наполнением!"
+msgstr "But we are working on filling it!"
+
+msgid "Создать первую игру"
+msgstr "Create the first game"
+
+msgid "← Назад к каталогу"
+msgstr "← Back to catalog"
+
+msgid "Всего %(num)s позиций"
+msgstr "%(num)s items in total"
+
+msgid "Осталось %(places)s мест"
+msgstr "%(places)s spots left"
+
+msgid "Страйкбольный портал для организации игр и общения."
+msgstr "An airsoft portal for organizing games and community."
+
+msgid "Навигация"
+msgstr "Navigation"
+
+msgid "Правила"
+msgstr "Rules"
+
+msgid "Контакты"
+msgstr "Contacts"
+
+msgid "Все права защищены."
+msgstr "All rights reserved."
+
+msgid "О нас"
+msgstr "About us"
+
+msgid "Язык интерфейса"
+msgstr "Interface language"
+
+msgid "Личный кабинет"
+msgstr "My account"
+
+msgid "Мои регистрации"
+msgstr "My registrations"
+
+msgid "Выйти"
+msgstr "Log out"
+
+msgid "Войти"
+msgstr "Log in"
+
+msgid "Регистрация"
+msgstr "Sign up"
+
+msgid "Навигация по страницам"
+msgstr "Pagination"
+
+msgid "Первая"
+msgstr "First"
+
+msgid "Последняя"
+msgstr "Last"
+
+msgid "Доступ запрещен"
+msgstr "Access denied"
+
+msgid "У вас нет прав для создания новостей."
+msgstr "You do not have permission to create news."
+
+msgid "Вернуться на главную"
+msgstr "Back to home"
+
+msgid "О сайте"
+msgstr "About the site"
+
+msgid "Группа энтузиастов страйбольного дела. Собираемся играем, в планах начать принимать участие в крупных проектах. Так же планируется создание сообщества и проведение мероприятий."
+msgstr "A group of airsoft enthusiasts. We get together to play, and we plan to take part in larger events. We also plan to build a community and organize events."
+
+msgid "Главная страница"
+msgstr "Home page"
+
+msgid "Мой сайт"
+msgstr "My site"
+
+msgid "Добавить новость"
+msgstr "Add news"
+
+msgid "Автор:"
+msgstr "Author:"
+
+msgid "Дата:"
+msgstr "Date:"
+
+msgid "Новостей пока нет."
+msgstr "No news yet."
+
+msgid "Привет, %(username)s"
+msgstr "Hello, %(username)s"
+
+msgid "Лента"
+msgstr "Feed"
+
+msgid "Опубликовать сразу"
+msgstr "Publish immediately"
+
+msgid "Сохранить"
+msgstr "Save"
+
+msgid "Наши правила"
+msgstr "Our rules"
+
+msgid "Правила сайта"
+msgstr "Site rules"
+
+msgid "Cамовыражение."
+msgstr "Self-expression."
+
+msgid "Многообразие."
+msgstr "Diversity."
+
+msgid "Творчество."
+msgstr "Creativity."
+
+msgid "Личность."
+msgstr "Individuality."
+
+msgid "У наших пользователей должна быть возможность создать что-то своё, выразить себя, свои мысли."
+msgstr "Our users should be able to create something of their own and express themselves and their thoughts."
+
+msgid "Мы уважаем и приветствуем разные мнения и культуры. Блогикум — это место, объединяющее самых разных людей. Поделитесь своим уникальным взглядом на мир."
+msgstr "We respect and welcome different opinions and cultures. Blogikum is a place that brings together very different people. Share your unique view of the world."
+
+msgid "Не важно, в какой области вы творите. Наши инструменты помогут вам раскрыть талант максимально просто и комфортно."
+msgstr "It does not matter what field you create in. Our tools will help you show your talent as simply and comfortably as possible."
+
+msgid "Мы сохраним ваши сокровенные мысли в тайне. Делитесь своей информацией только с теми, кого выбрали. Как и насколько засекречивать вашу личную информацию — определяете вы и только вы."
+msgstr "We will keep your innermost thoughts private. Share your information only with those you choose. How much and how to protect your personal information is up to you and only you."
+
+msgid "Присоединился:"
+msgstr "Joined:"
+
+msgid "Редактировать профиль"
+msgstr "Edit profile"
+
+msgid "Текущий аватар:"
+msgstr "Current avatar:"
+
+msgid "Сохранить изменения"
+msgstr "Save changes"
+
+msgid "Предстоящие"
+msgstr "Upcoming"
+
+msgid "Прошедшие"
+msgstr "Past"
+
+msgid "Вы пока не зарегистрированы ни на одну игру"
+msgstr "You are not registered for any games yet"
+
+msgid "Найдите игру и присоединяйтесь!"
+msgstr "Find a game and join in!"
+
+msgid "Посмотреть игры"
+msgstr "View games"
+
+msgid "Вы вышли из системы!"
+msgstr "You have been logged out!"
+
+msgid "Войти снова"
+msgstr "Log in again"
+
+msgid "На главную"
+msgstr "To home"
+
+msgid "Вход"
+msgstr "Login"
+
+msgid "Вход в систему"
+msgstr "Sign in to your account"
+
+msgid "Нет аккаунта?"
+msgstr "Don't have an account?"
+
+msgid "Пароль успешно изменён!"
+msgstr "Password changed successfully!"
+
+msgid "Поменять пароль"
+msgstr "Change password"
+
+msgid "Восстановление пароля завершено!"
+msgstr "Password reset complete!"
+
+msgid "Ваш пароль был сохранен. Теперь вы можете войти."
+msgstr "Your password has been saved. You can now log in."
+
+msgid "Восстановление пароля"
+msgstr "Password reset"
+
+msgid "Письмо с инструкциями по восстановлению пароля отправлено"
+msgstr "An email with password reset instructions has been sent"
+
+msgid "Мы отправили вам инструкцию по установке нового пароля на указанный адрес электронной почты (если в нашей базе данных есть такой адрес). Вы должны получить ее в ближайшее время."
+msgstr "We have emailed you instructions for setting a new password to the address you provided (if an account with that address exists in our database). You should receive them shortly."
+
+msgid "Если вы не получили письмо, пожалуйста, убедитесь, что вы ввели адрес с которым вы зарегистрировались, и проверьте папку со спамом."
+msgstr "If you did not receive the email, please make sure you entered the address you registered with, and check your spam folder."
+
+msgid "Отправить письмо для сброса пароля"
+msgstr "Send a password reset email"
+
+msgid "Отправить письмо"
+msgstr "Send email"
+
+msgid "Уже есть аккаунт?"
+msgstr "Already have an account?"
+
+msgid "Вы отменили регистрацию на игру"
+msgstr "You have cancelled your game registration"
+
+msgid "Расписание, сценарии, регистрация на игры"
+msgstr "Schedule, scenarios, game registration"
+
+msgid "Аксессуары 3D печать"
+msgstr "3D printed accessories"
+
+msgid "Индивидуальные детали, апгрейды, кастом"
+msgstr "Custom parts, upgrades, customization"
+
+msgid "Страйкбольные привода"
+msgstr "Airsoft guns"
+
+msgid "AEG, GBB, HPA, снайперские винтовки"
+msgstr "AEG, GBB, HPA, sniper rifles"
+
+msgid "Прицелы, глушители, тактические ручки"
+msgstr "Scopes, suppressors, tactical grips"
+
+msgid "Страйкбольное оборудование"
+msgstr "Airsoft equipment"
+
+msgid "Хронографы, зарядки, аккумуляторы"
+msgstr "Chronographs, chargers, batteries"
+
+msgid "Создание игры"
+msgstr "Create a game"
+
+msgid "Регистрация успешно завершена!"
+msgstr "Registration completed successfully!"
+
+msgid "Профиль успешно обновлен!"
+msgstr "Profile updated successfully!"
+
+msgid "✅ Статус успешно обновлен!"
+msgstr "✅ Status updated successfully!"
+
+msgid "✅ Вы успешно зарегистрировались на игру!"
+msgstr "✅ You have successfully registered for the game!"
+
+msgid "✅ Игра \"%(name)s\" успешно создана!"
+msgstr "✅ Game \"%(name)s\" created successfully!"

@@ -1,18 +1,18 @@
-<!DOCTYPE html>
-<html>
+{% load i18n %}{% get_current_language as LANGUAGE_CODE %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
-    <title>Добавить новость</title>
+    <title>{% translate "Добавить новость" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-4">
-        <h1>Добавить новость</h1>
+        <h1>{% translate "Добавить новость" %}</h1>
         
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="mb-3">
-                <label for="{{ form.title.id_for_label }}" class="form-label">Заголовок</label>
+                <label for="{{ form.title.id_for_label }}" class="form-label">{% translate "Заголовок" %}</label>
                 {{ form.title }}
                 {% if form.title.errors %}
                     <div class="text-danger small">{{ form.title.errors }}</div>
@@ -20,7 +20,7 @@
             </div>
             
             <div class="mb-3">
-                <label for="{{ form.content.id_for_label }}" class="form-label">Содержание</label>
+                <label for="{{ form.content.id_for_label }}" class="form-label">{% translate "Содержание" %}</label>
                 {{ form.content }}
                 {% if form.content.errors %}
                     <div class="text-danger small">{{ form.content.errors }}</div>
@@ -29,23 +29,23 @@
             
             <!-- ДОБАВЛЯЕМ ПОЛЕ ДЛЯ КАРТИНКИ -->
             <div class="mb-3">
-                <label for="{{ form.image.id_for_label }}" class="form-label">Изображение</label>
+                <label for="{{ form.image.id_for_label }}" class="form-label">{% translate "Изображение" %}</label>
                 {{ form.image }}
                 {% if form.image.errors %}
                     <div class="text-danger small">{{ form.image.errors }}</div>
                 {% endif %}
-                <div class="form-text">Загрузите картинку к новости (необязательно)</div>
+                <div class="form-text">{% translate "Загрузите картинку к новости (необязательно)" %}</div>
             </div>
             
             <div class="mb-3 form-check">
                 {{ form.is_published }}
                 <label for="{{ form.is_published.id_for_label }}" class="form-check-label">
-                    Опубликовать сразу
+                    {% translate "Опубликовать сразу" %}
                 </label>
             </div>
             
-            <button type="submit" class="btn btn-primary">Сохранить</button>
-            <a href="{% url 'home' %}" class="btn btn-secondary">Отмена</a>
+            <button type="submit" class="btn btn-primary">{% translate "Сохранить" %}</button>
+            <a href="{% url 'home' %}" class="btn btn-secondary">{% translate "Отмена" %}</a>
         </form>
     </div>
 </body>

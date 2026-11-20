@@ -15,6 +15,7 @@ Test deployment: <https://szw.tailf3363e.ts.net/>
 - **Participant list.** Per-game list with a status filter and search by first name, last name, callsign or phone number.
 - **Player profiles.** Avatar, callsign and contact details.
 - **Roles.** Regular players, a `moderators` group (created by a management command) and staff.
+- **Languages.** Russian (default), English and Japanese. The language is chosen in the header and remembered in a cookie; the first visit follows the browser language.
 - **Telegram notifications.** A message is sent when a new user registers (optional).
 
 ## Tech stack
@@ -89,11 +90,28 @@ All settings come from environment variables (a `.env` file is loaded automatica
 | `LOG_DIR` | Directory for `django.log`. | `./logs` |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Enable Telegram notifications. | empty (disabled) |
 
+## Translations (i18n)
+
+Russian is the source language: the strings in the code and templates are the original Russian text and
+`locale/<lang>/LC_MESSAGES/django.po` holds the English (`en`) and Japanese (`ja`) translations.
+GNU gettext is **not** required, a small standard-library script does the work and the compiled `.mo` files are committed:
+
+```bash
+python scripts/translations.py extract   # add new strings to the .po files (empty msgstr)
+# ...fill in the new msgstr values in locale/en and locale/ja...
+python scripts/translations.py compile   # build django.mo
+python scripts/translations.py check     # same check as CI: everything translated, .mo up to date
+```
+
+Rules for new text: in templates use `{% translate "..." %}` or `{% blocktranslate %}`, in Python use
+`gettext_lazy` (models, forms, class-level code) or `gettext` (inside views). To add a language, add it to
+`LANGUAGES` in `strikezoneweb/settings.py` and in `scripts/translations.py`.
+
 ## CI/CD
 
 The workflow in `.github/workflows/deploy.yml` runs on every push to `main` and on pull requests:
 
-1. **tests**: installs dependencies, runs flake8, checks that no model changes are missing migrations and runs pytest
+1. **tests**: installs dependencies, runs flake8, checks that all translations are complete, checks that no model changes are missing migrations and runs pytest
    against a PostgreSQL service container. This job also runs on pull requests.
 2. **build-and-deploy** (only on `main`): builds the Docker image and pushes it to Docker Hub, connects to the
    server through Tailscale, pulls the latest code over SSH, rebuilds the containers with Docker Compose and applies migrations.
@@ -110,6 +128,8 @@ Required repository secrets: `DOCKER_USERNAME`, `DOCKER_PASSWORD`, `TAILSCALE_AU
 │   ├── management/commands/  # setup_permissions, update_game_status
 │   ├── templates/            # HTML templates
 │   └── tests/                # pytest tests (auth, forms, models, views, notifications)
+├── locale/                   # Translations (en, ja): django.po sources and compiled django.mo
+├── scripts/translations.py   # extract / compile / check translations (no gettext needed)
 ├── strikezoneweb/            # Project settings, URLs, WSGI/ASGI
 ├── nginx.conf                # Nginx configuration (static, media, proxy to Gunicorn)
 ├── Dockerfile

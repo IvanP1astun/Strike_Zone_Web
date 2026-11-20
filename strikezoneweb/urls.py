@@ -8,6 +8,8 @@ from django.contrib.auth.forms import UserCreationForm
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    # set_language view used by the language switcher in the header (POST only)
+    path('i18n/', include('django.conf.urls.i18n')),
     path('', include('main.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path("auth/", include("django.contrib.auth.urls")),

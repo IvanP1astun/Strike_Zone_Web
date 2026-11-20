@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
@@ -119,7 +120,7 @@
 
 <nav aria-label="breadcrumb" class="mb-3">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="{% url 'catalog' %}">Каталог</a></li>
+    <li class="breadcrumb-item"><a href="{% url 'catalog' %}">{% translate "Каталог" %}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ title }}</li>
   </ol>
 </nav>
@@ -132,15 +133,15 @@
     </div>
     <div>
       <h1 class="mb-0">{{ title }}</h1>
-      <p class="text-muted mb-0">Всего {{ items.count }} позиций</p>
+      <p class="text-muted mb-0">{% blocktranslate with num=items.count %}Всего {{ num }} позиций{% endblocktranslate %}</p>
     </div>
   </div>
   
   <!-- Кнопка создания игры (только для организаторов) -->
-  {% if title == 'Страйкбольные игры' %}
+  {% if is_games %}
     {% if user.is_authenticated and perms.main.can_add_game %}
       <a href="{% url 'game_create' %}" class="btn btn-success create-btn">
-        <i class="bi bi-plus-circle me-2"></i>Создать игру
+        <i class="bi bi-plus-circle me-2"></i>{% translate "Создать игру" %}
       </a>
     {% endif %}
   {% endif %}
@@ -149,7 +150,7 @@
 <div class="items-grid">
   {% for item in items %}
     
-    {% if title == 'Страйкбольные игры' %}
+    {% if is_games %}
       <a href="{% url 'game_detail' item.id %}" class="item-card">
         <div class="item-title">{{ item.name }}</div>
         <div class="item-desc">
@@ -173,9 +174,9 @@
             {{ item.registrations.count }}/{{ item.max_players }}
           </span>
           {% if item.is_full %}
-            <span class="badge bg-danger">Мест нет</span>
+            <span class="badge bg-danger">{% translate "Мест нет" %}</span>
           {% elif item.places_left <= 5 and item.places_left > 0 %}
-            <span class="badge bg-warning text-dark">Осталось {{ item.places_left }} мест</span>
+            <span class="badge bg-warning text-dark">{% blocktranslate with places=item.places_left %}Осталось {{ places }} мест{% endblocktranslate %}</span>
           {% endif %}
         </div>
       </a>
@@ -191,9 +192,9 @@
             <span class="price">{{ item.price }} ₽</span>
           {% endif %}
           {% if item.in_stock %}
-            <span class="badge bg-primary">В наличии</span>
+            <span class="badge bg-primary">{% translate "В наличии" %}</span>
           {% else %}
-            <span class="badge bg-danger">Нет в наличии</span>
+            <span class="badge bg-danger">{% translate "Нет в наличии" %}</span>
           {% endif %}
         </div>
       </div>
@@ -202,14 +203,14 @@
   {% empty %}
     <div class="empty-state">
       <span class="icon">📭</span>
-      <h4>В этом разделе пока пусто</h4>
-      <p class="text-muted">Но мы работаем над наполнением!</p>
+      <h4>{% translate "В этом разделе пока пусто" %}</h4>
+      <p class="text-muted">{% translate "Но мы работаем над наполнением!" %}</p>
       
       <!-- Кнопка "Создать первую игру" в пустом состоянии -->
-      {% if title == 'Страйкбольные игры' %}
+      {% if is_games %}
         {% if user.is_authenticated and perms.main.can_add_game %}
           <a href="{% url 'game_create' %}" class="btn btn-success create-btn mt-3">
-            <i class="bi bi-plus-circle me-2"></i>Создать первую игру
+            <i class="bi bi-plus-circle me-2"></i>{% translate "Создать первую игру" %}
           </a>
         {% endif %}
       {% endif %}
@@ -219,7 +220,7 @@
 
 <div class="mt-4">
   <a href="{% url 'catalog' %}" class="btn btn-outline-secondary">
-    ← Назад к каталогу
+    {% translate "← Назад к каталогу" %}
   </a>
 </div>
 {% endblock %}
