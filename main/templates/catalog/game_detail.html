@@ -166,8 +166,13 @@
     <div class="mt-2 mt-sm-0">
       <span class="badge bg-success" style="font-size: 16px; padding: 8px 20px;">
         <i class="bi bi-people me-1"></i>
-        {{ total_count }}/{{ game.max_players }}
+        {{ game.registered_players }}/{{ game.max_players }}
       </span>
+      {% if waitlist_count %}
+        <span class="badge bg-warning text-dark ms-1" style="font-size: 14px; padding: 8px 14px;">
+          {% blocktranslate with num=waitlist_count %}⏳ В листе ожидания: {{ num }}{% endblocktranslate %}
+        </span>
+      {% endif %}
     </div>
   </div>
   {% if game.description %}
@@ -262,6 +267,14 @@
           <i class="bi bi-info-circle me-2"></i>
           {% translate "Вы уже зарегистрированы на эту игру. Измените статус ниже." %}
         </div>
+        {% if user_registration.is_waitlisted %}
+          <div class="alert alert-warning">
+            <i class="bi bi-hourglass-split me-2"></i>
+            {% blocktranslate trimmed with position=user_registration.waitlist_position %}
+              Вы в листе ожидания, ваша позиция — {{ position }}. Место достанется вам автоматически, если оно освободится.
+            {% endblocktranslate %}
+          </div>
+        {% endif %}
       {% endif %}
       
       <form method="post">
@@ -427,6 +440,9 @@
                     <strong>{{ reg.full_name }}</strong>
                     {% if reg.callsign %}
                       <span class="text-muted">({{ reg.callsign }})</span>
+                    {% endif %}
+                    {% if reg.is_waitlisted %}
+                      <span class="badge bg-warning text-dark" style="font-size: 10px;">{% translate "⏳ лист ожидания" %}</span>
                     {% endif %}
                     {% if reg.user %}
                       <span class="badge bg-primary" style="font-size: 10px;">

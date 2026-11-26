@@ -271,6 +271,13 @@ def catalog_equipment(request):
     )
 
 
+def _waitlist_message(registration):
+    return _(
+        "⏳ Свободных мест нет: вы в листе ожидания, ваша позиция — %(position)s. "
+        "Если место освободится, вы получите его автоматически."
+    ) % {"position": registration.waitlist_position}
+
+
 def game_detail(request, game_id):
     """Детальная страница игры с формой регистрации"""
     game = get_object_or_404(AirsoftGame, id=game_id)
@@ -296,6 +303,7 @@ def game_detail(request, game_id):
     yes_count = game.registrations.filter(participation_status="yes").count()
     no_count = game.registrations.filter(participation_status="no").count()
     unknown_count = game.registrations.filter(participation_status="unknown").count()
+    waitlist_count = game.registrations.filter(is_waitlisted=True).count()
 
     # Проверяем, зарегистрирован ли уже пользователь на эту игру
     user_registration = None
@@ -316,8 +324,11 @@ def game_detail(request, game_id):
         if user_registration:
             form = GameRegistrationEditForm(request.POST, instance=user_registration)
             if form.is_valid():
-                form.save()
-                messages.success(request, _("✅ Статус успешно обновлен!"))
+                registration = form.save()
+                if registration.is_waitlisted:
+                    messages.warning(request, _waitlist_message(registration))
+                else:
+                    messages.success(request, _("✅ Статус успешно обновлен!"))
                 return redirect("game_detail", game_id=game.id)
         else:
             form = GameRegistrationForm(request.POST, user=request.user, game=game)
@@ -327,7 +338,10 @@ def game_detail(request, game_id):
                 if request.user.is_authenticated:
                     registration.user = request.user
                 registration.save()
-                messages.success(request, _("✅ Вы успешно зарегистрировались на игру!"))
+                if registration.is_waitlisted:
+                    messages.warning(request, _waitlist_message(registration))
+                else:
+                    messages.success(request, _("✅ Вы успешно зарегистрировались на игру!"))
                 return redirect("game_detail", game_id=game.id)
             else:
                 for field, errors in form.errors.items():
@@ -350,6 +364,7 @@ def game_detail(request, game_id):
             "yes_count": yes_count,
             "no_count": no_count,
             "unknown_count": unknown_count,
+            "waitlist_count": waitlist_count,
             "total_count": game.registrations.count(),
             "status_filter": status_filter,
             "search_query": search_query,

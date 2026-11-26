@@ -91,6 +91,8 @@ class AirsoftGameAdmin(admin.ModelAdmin):
     list_filter = ['status', 'is_active', 'date']
     search_fields = ['name', 'description', 'location']
     date_hierarchy = 'date'
+    # The counter is maintained automatically (confirmed places only).
+    readonly_fields = ['registered_players']
 
 
 @admin.register(Favorite)
@@ -153,7 +155,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(GameRegistration)
 class GameRegistrationAdmin(admin.ModelAdmin):
-    list_display = ['full_name', 'game', 'participation_status', 'has_car', 'registered_at']
-    list_filter = ['participation_status', 'has_car', 'has_equipment']
+    list_display = ['full_name', 'game', 'participation_status', 'is_waitlisted', 'has_car', 'registered_at']
+    list_filter = ['participation_status', 'is_waitlisted', 'has_car', 'has_equipment']
     search_fields = ['first_name', 'last_name', 'phone_number', 'callsign', 'game__name']
     readonly_fields = ['registered_at', 'updated_at']
