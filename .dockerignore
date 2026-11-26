@@ -20,3 +20,5 @@ media/
 staticfiles/
 logs/
 avatars/
+*.sqlite3*
+*.bak

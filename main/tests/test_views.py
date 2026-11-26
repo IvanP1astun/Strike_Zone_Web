@@ -107,3 +107,14 @@ def test_create_button_visible_for_any_group_member_but_access_denied(client):
 
     create_response = client.get(reverse("news_create"))
     assert create_response.status_code == 403
+
+
+def test_debug_is_off_by_default():
+    """DEBUG must come from the environment, never be hard-coded to True."""
+    import re
+    from pathlib import Path
+
+    from django.conf import settings
+
+    source = (Path(settings.BASE_DIR) / 'strikezoneweb' / 'settings.py').read_text(encoding='utf-8')
+    assert not re.search(r'^DEBUG\s*=\s*True', source, re.M)
