@@ -608,10 +608,11 @@ def registration_changed(sender, instance, **kwargs):
 
 @receiver(post_save, sender=AirsoftGame)
 def game_changed(sender, instance, **kwargs):
-    """max_players may have changed (admin): re-evaluate the waiting list."""
+    """max_players may have been raised (admin): let waiting players in."""
     if kwargs.get("raw"):
         return
-    instance.rebalance()
+    if instance.promote_from_waitlist():
+        instance.sync_registered_players()
 
 
 class Favorite(models.Model):
