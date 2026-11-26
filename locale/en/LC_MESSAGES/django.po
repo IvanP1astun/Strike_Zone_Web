@@ -334,6 +334,12 @@ msgstr "Optional field"
 msgid "Есть автомобиль"
 msgstr "Has a car"
 
+msgid "В листе ожидания"
+msgstr "On the waiting list"
+
+msgid "В очереди с"
+msgstr "In the queue since"
+
 msgid "Дата регистрации"
 msgstr "Registered at"
 
@@ -421,6 +427,9 @@ msgstr "Register"
 msgid "Поиск по имени, фамилии, позывному или телефону..."
 msgstr "Search by first name, last name, callsign or phone..."
 
+msgid "⏳ лист ожидания"
+msgstr "⏳ waiting list"
+
 msgid "верифицирован"
 msgstr "verified"
 
@@ -441,6 +450,12 @@ msgstr "Be the first! Register for the game above."
 
 msgid "← Назад к играм"
 msgstr "← Back to games"
+
+msgid "⏳ В листе ожидания: %(num)s"
+msgstr "⏳ On the waiting list: %(num)s"
+
+msgid "Вы в листе ожидания, ваша позиция — %(position)s. Место достанется вам автоматически, если оно освободится."
+msgstr "You are on the waiting list, your position is %(position)s. You will get a place automatically if one becomes free."
 
 msgid "<a href=\"%(login_url)s\">Войдите</a> или <a href=\"%(register_url)s\">зарегистрируйтесь</a>, чтобы данные подставлялись автоматически"
 msgstr "<a href=\"%(login_url)s\">Sign in</a> or <a href=\"%(register_url)s\">register</a> so your details are filled in automatically"
@@ -673,6 +688,9 @@ msgstr "Send email"
 msgid "Уже есть аккаунт?"
 msgstr "Already have an account?"
 
+msgid "⏳ Свободных мест нет: вы в листе ожидания, ваша позиция — %(position)s. Если место освободится, вы получите его автоматически."
+msgstr "⏳ There are no free places: you are on the waiting list, your position is %(position)s. If a place becomes free, you will get it automatically."
+
 msgid "Вы отменили регистрацию на игру"
 msgstr "You have cancelled your game registration"
 
@@ -709,11 +727,11 @@ msgstr "Registration completed successfully!"
 msgid "Профиль успешно обновлен!"
 msgstr "Profile updated successfully!"
 
+msgid "✅ Игра \"%(name)s\" успешно создана!"
+msgstr "✅ Game \"%(name)s\" created successfully!"
+
 msgid "✅ Статус успешно обновлен!"
 msgstr "✅ Status updated successfully!"
 
 msgid "✅ Вы успешно зарегистрировались на игру!"
 msgstr "✅ You have successfully registered for the game!"
-
-msgid "✅ Игра \"%(name)s\" успешно создана!"
-msgstr "✅ Game \"%(name)s\" created successfully!"

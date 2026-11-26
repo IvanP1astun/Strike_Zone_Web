@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.db import models
-from django.db.models import UniqueConstraint
-from django.db.models.signals import pre_save
+from django.db import models, transaction
+from django.db.models import Q, UniqueConstraint
+from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -411,7 +411,43 @@ class AirsoftGame(models.Model):
 
     @property
     def places_left(self):
-        return self.max_players - self.registered_players
+        return max(self.max_players - self.registered_players, 0)
+
+    def confirmed_registrations(self):
+        """Registrations that occupy a place: they will come and are not waiting."""
+        return self.registrations.filter(
+            participation_status="yes", is_waitlisted=False
+        )
+
+    def promote_from_waitlist(self):
+        """Move people from the waiting list into free places (oldest first).
+
+        Returns the list of promoted registrations (useful for notifications).
+        """
+        free = self.max_players - self.confirmed_registrations().count()
+        if free <= 0:
+            return []
+        waiting = list(
+            self.registrations.filter(is_waitlisted=True, participation_status="yes")
+            .order_by("waitlisted_at", "pk")[:free]
+        )
+        if waiting:
+            GameRegistration.objects.filter(pk__in=[r.pk for r in waiting]).update(
+                is_waitlisted=False, waitlisted_at=None
+            )
+        return waiting
+
+    def sync_registered_players(self):
+        """Keep the stored counter equal to the number of confirmed places."""
+        count = self.confirmed_registrations().count()
+        AirsoftGame.objects.filter(pk=self.pk).update(registered_players=count)
+        self.registered_players = count
+
+    def rebalance(self):
+        """Fill free places from the waiting list and refresh the counter."""
+        promoted = self.promote_from_waitlist()
+        self.sync_registered_players()
+        return promoted
 
 
 @receiver(pre_save, sender=AirsoftGame)
@@ -487,6 +523,14 @@ class GameRegistration(models.Model):
         verbose_name=_("Наличие амуниции"),
     )
 
+    # Лист ожидания: «приеду», но свободных мест нет
+    is_waitlisted = models.BooleanField(
+        default=False, verbose_name=_("В листе ожидания")
+    )
+    waitlisted_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("В очереди с")
+    )
+
     # Дополнительно
     comment = models.TextField(verbose_name=_("Комментарий"), blank=True)
     registered_at = models.DateTimeField(
@@ -502,6 +546,43 @@ class GameRegistration(models.Model):
     def __str__(self):
         return f"{self.last_name} {self.first_name} - {self.game.name}"
 
+    def save(self, *args, **kwargs):
+        """Decide whether this registration gets a place or goes to the waiting list.
+
+        The game row is locked so that two people cannot take the last place
+        at the same time (PostgreSQL; SQLite serialises writes anyway).
+        """
+        with transaction.atomic():
+            game = AirsoftGame.objects.select_for_update().get(pk=self.game_id)
+            if self.participation_status != "yes":
+                # Not coming / unknown: leaves the queue and holds no place.
+                self.is_waitlisted = False
+                self.waitlisted_at = None
+            elif not self.is_waitlisted:
+                taken = game.confirmed_registrations()
+                if self.pk:
+                    taken = taken.exclude(pk=self.pk)
+                if taken.count() >= game.max_players:
+                    self.is_waitlisted = True
+                    self.waitlisted_at = timezone.now()
+            super().save(*args, **kwargs)
+
+    @property
+    def waitlist_position(self):
+        """1-based position in the waiting list, or None if not waiting."""
+        if not self.is_waitlisted:
+            return None
+        waiting = self.game.registrations.filter(
+            is_waitlisted=True, participation_status="yes"
+        )
+        if self.waitlisted_at is None:  # set by hand in the admin
+            return waiting.filter(pk__lt=self.pk).count() + 1
+        ahead = waiting.filter(
+            Q(waitlisted_at__lt=self.waitlisted_at)
+            | Q(waitlisted_at=self.waitlisted_at, pk__lt=self.pk)
+        )
+        return ahead.count() + 1
+
     @property
     def full_name(self):
         return f"{self.last_name} {self.first_name}"
@@ -512,6 +593,25 @@ class GameRegistration(models.Model):
         if self.user and self.user.is_authenticated:
             return True
         return False
+
+
+@receiver(post_save, sender=GameRegistration)
+@receiver(post_delete, sender=GameRegistration)
+def registration_changed(sender, instance, **kwargs):
+    """A place was taken or freed: fill it from the waiting list, refresh the counter."""
+    if kwargs.get("raw"):
+        return
+    game = AirsoftGame.objects.filter(pk=instance.game_id).first()
+    if game is not None:
+        game.rebalance()
+
+
+@receiver(post_save, sender=AirsoftGame)
+def game_changed(sender, instance, **kwargs):
+    """max_players may have changed (admin): re-evaluate the waiting list."""
+    if kwargs.get("raw"):
+        return
+    instance.rebalance()
 
 
 class Favorite(models.Model):
