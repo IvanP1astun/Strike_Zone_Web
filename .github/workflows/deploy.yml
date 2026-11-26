@@ -119,6 +119,22 @@ jobs:
             docker compose exec -T web python manage.py migrate
             echo "📦 Collecting static files..."
             docker compose exec -T web python manage.py collectstatic --noinput
+            echo "🩺 Waiting for /health/ ..."
+            ok=0
+            for i in $(seq 1 12); do
+              if docker compose exec -T web python scripts/healthcheck.py; then
+                ok=1
+                break
+              fi
+              echo "Not ready yet ($i/12), retrying in 5s..."
+              sleep 5
+            done
+            if [ "$ok" != "1" ]; then
+              docker compose ps
+              docker compose logs --tail=50 web
+              echo "❌ Health check failed after deploy"
+              exit 1
+            fi
             echo "✅ Deploy completed!"
           ENDSSH
 
