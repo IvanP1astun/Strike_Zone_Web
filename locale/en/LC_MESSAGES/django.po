@@ -361,6 +361,27 @@ msgstr "Nylon"
 msgid "Закрыть"
 msgstr "Close"
 
+msgid "Календарь игр"
+msgstr "Game calendar"
+
+msgid "Подписаться на календарь (.ics)"
+msgstr "Subscribe to the calendar (.ics)"
+
+msgid "Предыдущий месяц"
+msgstr "Previous month"
+
+msgid "Сегодня"
+msgstr "Today"
+
+msgid "Следующий месяц"
+msgstr "Next month"
+
+msgid "В календарь"
+msgstr "Add to calendar"
+
+msgid "В этом месяце игр нет."
+msgstr "There are no games this month."
+
 msgid "Разделов пока нет"
 msgstr "There are no sections yet"
 
@@ -504,6 +525,9 @@ msgstr "Contacts"
 
 msgid "Все права защищены."
 msgstr "All rights reserved."
+
+msgid "Календарь"
+msgstr "Calendar"
 
 msgid "О нас"
 msgstr "About us"

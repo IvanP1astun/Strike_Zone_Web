@@ -12,6 +12,7 @@ Test deployment: <https://szw.tailf3363e.ts.net/>
 - **Catalog.** Games, modules, guns, accessories and equipment.
 - **Game registration.** Players register for a game and set their participation status (yes / no / unknown) and can change it at any time or cancel.
 - **Capacity and waiting list.** Only players who answered "yes" take a place. When the game is full, new "yes" registrations join a waiting list and are promoted automatically (in order) when someone cancels or the limit is raised.
+- **Game calendar.** `/calendar/` shows games by month; every game can be added to Google/Apple/Outlook calendar as an `.ics` file, and `/calendar.ics` is a subscribable feed of upcoming games.
 - **Participant list.** Per-game list with a status filter and search by first name, last name, callsign or phone number.
 - **Player profiles.** Avatar, callsign and contact details.
 - **Roles.** Regular players, a `moderators` group (created by a management command) and staff.

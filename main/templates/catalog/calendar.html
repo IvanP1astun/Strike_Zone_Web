@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% translate "Календарь игр" %}{% endblock %}
+
+{% block content %}
+<style>
+  .cal-table { table-layout: fixed; width: 100%; background: #fff; }
+  .cal-table th { text-align: center; font-weight: 600; background: #f8f9fa; }
+  .cal-table td { height: 110px; vertical-align: top; padding: 4px; border: 1px solid #e9ecef; }
+  .cal-day { font-size: 13px; color: #6c757d; }
+  .cal-out { background: #fafafa; }
+  .cal-out .cal-day { color: #ced4da; }
+  .cal-today { background: #fff8e1; }
+  .cal-today .cal-day { color: #212529; font-weight: 700; }
+  .cal-game { display: block; font-size: 12px; margin-top: 3px; padding: 2px 6px; border-radius: 6px;
+              background: #198754; color: #fff; text-decoration: none; overflow: hidden;
+              text-overflow: ellipsis; white-space: nowrap; }
+  .cal-game:hover { background: #157347; color: #fff; }
+  @media (max-width: 768px) { .cal-table td { height: 70px; } .cal-game { font-size: 10px; padding: 1px 3px; } }
+</style>
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="{% url 'home' %}">{% translate "Главная" %}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{% translate "Календарь игр" %}</li>
+  </ol>
+</nav>
+
+<div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+  <h1 class="h2 mb-0"><i class="bi bi-calendar-event me-2"></i>{% translate "Календарь игр" %}</h1>
+  <a class="btn btn-outline-secondary btn-sm" href="{% url 'games_ics_feed' %}">
+    <i class="bi bi-rss me-1"></i>{% translate "Подписаться на календарь (.ics)" %}
+  </a>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  {% if show_prev %}
+    <a class="btn btn-outline-primary btn-sm" href="?year={{ prev.year }}&month={{ prev.month }}"
+       aria-label="{% translate 'Предыдущий месяц' %}">&larr;</a>
+  {% else %}<span></span>{% endif %}
+  <div class="text-center">
+    <h2 class="h4 mb-0">{{ month_date|date:"F Y" }}</h2>
+    <a class="small" href="{% url 'games_calendar' %}">{% translate "Сегодня" %}</a>
+  </div>
+  {% if show_next %}
+    <a class="btn btn-outline-primary btn-sm" href="?year={{ next.year }}&month={{ next.month }}"
+       aria-label="{% translate 'Следующий месяц' %}">&rarr;</a>
+  {% else %}<span></span>{% endif %}
+</div>
+
+<table class="cal-table table-bordered mb-4">
+  <thead>
+    <tr>
+      {% for day in weekdays %}<th>{{ day|date:"D" }}</th>{% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for week in weeks %}
+      <tr>
+        {% for cell in week %}
+          <td class="{% if not cell.in_month %}cal-out{% endif %} {% if cell.is_today %}cal-today{% endif %}">
+            <div class="cal-day">{{ cell.date.day }}</div>
+            {% for game in cell.games %}
+              <a class="cal-game" href="{% url 'game_detail' game.id %}" title="{{ game.name }}">{{ game.name }}</a>
+            {% endfor %}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if month_games %}
+  <ul class="list-group mb-4">
+    {% for game in month_games %}
+      <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <a href="{% url 'game_detail' game.id %}"><strong>{{ game.name }}</strong></a>
+          <span class="text-muted ms-2">{{ game.date|date:"d.m.Y" }}{% if game.location %}, {{ game.location }}{% endif %}</span>
+        </div>
+        <a class="btn btn-sm btn-outline-success" href="{% url 'game_ics' game.id %}">
+          <i class="bi bi-calendar-plus me-1"></i>{% translate "В календарь" %}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">{% translate "В этом месяце игр нет." %}</p>
+{% endif %}
+{% endblock %}
