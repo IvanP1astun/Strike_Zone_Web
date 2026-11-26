@@ -15,6 +15,7 @@ Test deployment: <https://szw.tailf3363e.ts.net/>
 - **Player profiles.** Avatar, callsign and contact details.
 - **Roles.** Regular players, a `moderators` group (created by a management command) and staff.
 - **Languages.** Russian (default), English and Japanese. The language is chosen in the header and remembered in a cookie; the first visit follows the browser language.
+- **Health check.** `GET /health/` returns 200 `{"status": "ok"}` when the app can reach the database and 503 otherwise; Docker Compose uses it as the `web` container healthcheck (nginx starts only after `web` is healthy).
 - **Telegram notifications.** A message is sent when a new user registers (optional).
 
 ## Tech stack

@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
 from django.contrib.auth import login
@@ -8,7 +10,10 @@ from django.views.generic import ListView, CreateView
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.db import models
+from django.db import connection, models
+from django.http import JsonResponse
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_safe
 
 from .models import (
     News,
@@ -31,6 +36,8 @@ from .forms import (
     ProfileForm,
     GameCreateForm,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def home(request):
@@ -430,3 +437,21 @@ def game_create(request):
         'title': _('Создание игры'),
         'icon': '➕',
     })
+
+
+@require_safe
+@never_cache
+def health(request):
+    """Liveness/readiness probe for Docker and monitoring.
+
+    Returns 200 when the app can reach the database, 503 otherwise.
+    It exposes no data, so it is public.
+    """
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            cursor.fetchone()
+    except Exception:
+        logger.exception("Health check failed: database is not reachable")
+        return JsonResponse({"status": "error", "database": "unavailable"}, status=503)
+    return JsonResponse({"status": "ok", "database": "ok"})
