@@ -1,6 +1,5 @@
 # StrikeZone 🎯
 
-[![CI/CD](https://github.com/IvanP1astun/Strike_Zone_Web/actions/workflows/deploy.yml/badge.svg)](https://github.com/IvanP1astun/Strike_Zone_Web/actions/workflows/deploy.yml)
 
 A web portal for an airsoft community: news, a catalog of games and gear, game registration and player profiles.
 The interface is in Russian.
