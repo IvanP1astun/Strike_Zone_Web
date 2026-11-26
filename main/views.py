@@ -1,4 +1,6 @@
+import calendar as calendar_module
 import logging
+from datetime import date, timedelta
 
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib import messages
@@ -7,14 +9,15 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.views.generic import ListView, CreateView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
 from django.db import connection, models
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_safe
 
+from .ics import build_calendar
 from .models import (
     News,
     Catalog,
@@ -470,3 +473,99 @@ def health(request):
         logger.exception("Health check failed: database is not reachable")
         return JsonResponse({"status": "error", "database": "unavailable"}, status=503)
     return JsonResponse({"status": "ok", "database": "ok"})
+
+
+# =============================================
+# КАЛЕНДАРЬ ИГР
+# =============================================
+
+CALENDAR_MIN_YEAR = 2000
+CALENDAR_MAX_YEAR = 2100
+
+
+def _month_shift(year, month, delta):
+    index = year * 12 + (month - 1) + delta
+    return index // 12, index % 12 + 1
+
+
+def games_calendar(request):
+    """Месячный календарь активных игр."""
+    today = timezone.localdate()
+    try:
+        year = int(request.GET.get("year", today.year))
+        month = int(request.GET.get("month", today.month))
+        date(year, month, 1)
+        if not CALENDAR_MIN_YEAR <= year <= CALENDAR_MAX_YEAR:
+            raise ValueError
+    except (TypeError, ValueError):
+        year, month = today.year, today.month
+
+    weeks_dates = calendar_module.Calendar(firstweekday=0).monthdatescalendar(year, month)
+    first_day, last_day = weeks_dates[0][0], weeks_dates[-1][-1]
+    games = AirsoftGame.objects.filter(
+        is_active=True, date__gte=first_day, date__lte=last_day
+    ).order_by("date", "name")
+    by_day = {}
+    for game in games:
+        by_day.setdefault(game.date, []).append(game)
+
+    weeks = [
+        [
+            {
+                "date": day,
+                "in_month": day.month == month,
+                "is_today": day == today,
+                "games": by_day.get(day, []),
+            }
+            for day in week
+        ]
+        for week in weeks_dates
+    ]
+    prev_year, prev_month = _month_shift(year, month, -1)
+    next_year, next_month = _month_shift(year, month, 1)
+    month_games = [g for g in games if g.date.month == month and g.date.year == year]
+    return render(
+        request,
+        "catalog/calendar.html",
+        {
+            "weeks": weeks,
+            "month_date": date(year, month, 1),
+            # 2024-01-01 is a Monday: used for localized weekday names
+            "weekdays": [date(2024, 1, 1) + timedelta(days=i) for i in range(7)],
+            "month_games": month_games,
+            "prev": {"year": prev_year, "month": prev_month},
+            "next": {"year": next_year, "month": next_month},
+            "show_prev": (prev_year, prev_month) >= (CALENDAR_MIN_YEAR, 1),
+            "show_next": (next_year, next_month) <= (CALENDAR_MAX_YEAR, 12),
+        },
+    )
+
+
+def _ics_response(request, games, filename=None):
+    content = build_calendar(
+        games,
+        url_for=lambda game: request.build_absolute_uri(
+            reverse("game_detail", args=[game.id])
+        ),
+        host=request.get_host(),
+    )
+    response = HttpResponse(content, content_type="text/calendar; charset=utf-8")
+    if filename:
+        response["Content-Disposition"] = 'attachment; filename="%s"' % filename
+    return response
+
+
+@require_safe
+def game_ics(request, game_id):
+    """Скачать одну игру как событие календаря (.ics)."""
+    game = get_object_or_404(AirsoftGame, id=game_id)
+    return _ics_response(request, [game], filename="game-%s.ics" % game.id)
+
+
+@require_safe
+def games_ics_feed(request):
+    """Лента предстоящих активных игр для подписки в календаре (.ics)."""
+    games = AirsoftGame.objects.filter(
+        is_active=True, date__gte=timezone.localdate()
+    ).order_by("date", "name")
+    return _ics_response(request, games)

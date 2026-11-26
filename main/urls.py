@@ -18,6 +18,9 @@ urlpatterns = [
     path("catalog/games/", views.catalog_games, name="catalog_games"),
     path('catalog/games/create/', views.game_create, name='game_create'),
     path("catalog/games/<int:game_id>/", views.game_detail, name="game_detail"),
+    path("catalog/games/<int:game_id>/ics/", views.game_ics, name="game_ics"),
+    path("calendar/", views.games_calendar, name="games_calendar"),
+    path("calendar.ics", views.games_ics_feed, name="games_ics_feed"),
     path(
         "catalog/games/cancel/<int:registration_id>/",
         views.cancel_registration,
