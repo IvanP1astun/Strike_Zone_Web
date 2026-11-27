@@ -346,6 +346,9 @@ msgstr "Optional field"
 msgid "Есть автомобиль"
 msgstr "Has a car"
 
+msgid "Присутствовал"
+msgstr "Attended"
+
 msgid "В листе ожидания"
 msgstr "On the waiting list"
 
@@ -369,6 +372,18 @@ msgstr "Other"
 
 msgid "Нейлон"
 msgstr "Nylon"
+
+msgid "Новичок"
+msgstr "Rookie"
+
+msgid "Боец"
+msgstr "Fighter"
+
+msgid "Ветеран"
+msgstr "Veteran"
+
+msgid "Легенда"
+msgstr "Legend"
 
 msgid "Уведомления в Telegram отключены."
 msgstr "Telegram notifications are turned off."
@@ -421,6 +436,36 @@ msgstr "%(total)s items in %(sections_count)s sections"
 msgid "%(num)s позиций"
 msgstr "%(num)s items"
 
+msgid "Присутствие на игре"
+msgstr "Game attendance"
+
+msgid "Присутствие"
+msgstr "Attendance"
+
+msgid "Не отмечено"
+msgstr "Not marked"
+
+msgid "✅ Пришёл"
+msgstr "✅ Came"
+
+msgid "❌ Не пришёл"
+msgstr "❌ Did not come"
+
+msgid "Сохранить"
+msgstr "Save"
+
+msgid "Отметить всех как пришедших"
+msgstr "Mark everyone as came"
+
+msgid "Назад к игре"
+msgstr "Back to the game"
+
+msgid "Нет подтверждённых участников."
+msgstr "There are no confirmed participants."
+
+msgid "Пришли: %(came)s из %(total)s"
+msgstr "Came: %(came)s of %(total)s"
+
 msgid "Создание новой игры"
 msgstr "Create a new game"
 
@@ -429,6 +474,9 @@ msgstr "Create game"
 
 msgid "Отмена"
 msgstr "Cancel"
+
+msgid "Отметить присутствие"
+msgstr "Mark attendance"
 
 msgid "✅ Приедут"
 msgstr "✅ Coming"
@@ -625,9 +673,6 @@ msgstr "Feed"
 msgid "Опубликовать сразу"
 msgstr "Publish immediately"
 
-msgid "Сохранить"
-msgstr "Save"
-
 msgid "Наши правила"
 msgstr "Our rules"
 
@@ -660,6 +705,24 @@ msgstr "We will keep your innermost thoughts private. Share your information onl
 
 msgid "Присоединился:"
 msgstr "Joined:"
+
+msgid "Игр сыграно"
+msgstr "Games played"
+
+msgid "Посещаемость"
+msgstr "Attendance rate"
+
+msgid "Предстоящих игр"
+msgstr "Upcoming games"
+
+msgid "Пропущено"
+msgstr "Missed"
+
+msgid "Достижения"
+msgstr "Achievements"
+
+msgid "Пока нет достижений: сыграйте первую игру!"
+msgstr "No achievements yet: play your first game!"
 
 msgid "Редактировать профиль"
 msgstr "Edit profile"
@@ -714,6 +777,15 @@ msgstr "Find a game and join in!"
 
 msgid "Посмотреть игры"
 msgstr "View games"
+
+msgid "%(num)s игр"
+msgstr "%(num)s games"
+
+msgid "До значка %(icon)s %(title)s: игр осталось %(left)s"
+msgstr "To the badge %(icon)s %(title)s: %(left)s games left"
+
+msgid "Первая игра: %(first)s, последняя: %(last)s"
+msgstr "First game: %(first)s, last: %(last)s"
 
 msgid "Вы вышли из системы!"
 msgstr "You have been logged out!"
@@ -855,6 +927,12 @@ msgstr "Could not save the notification settings."
 
 msgid "Создание игры"
 msgstr "Create a game"
+
+msgid "Отметить присутствие можно в день игры или позже."
+msgstr "Attendance can be marked on the day of the game or later."
+
+msgid "Присутствие сохранено."
+msgstr "Attendance saved."
 
 msgid "Регистрация успешно завершена!"
 msgstr "Registration completed successfully!"

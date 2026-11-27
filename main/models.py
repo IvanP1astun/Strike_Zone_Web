@@ -559,6 +559,11 @@ class GameRegistration(models.Model):
         verbose_name=_("Наличие амуниции"),
     )
 
+    # Отметка организатора после игры: None - не отмечено, True - пришёл, False - не пришёл
+    attended = models.BooleanField(
+        null=True, blank=True, verbose_name=_("Присутствовал")
+    )
+
     # Лист ожидания: «приеду», но свободных мест нет
     is_waitlisted = models.BooleanField(
         default=False, verbose_name=_("В листе ожидания")

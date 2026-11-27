@@ -19,6 +19,7 @@ urlpatterns = [
     path('catalog/games/create/', views.game_create, name='game_create'),
     path("catalog/games/<int:game_id>/", views.game_detail, name="game_detail"),
     path("catalog/games/<int:game_id>/ics/", views.game_ics, name="game_ics"),
+    path("catalog/games/<int:game_id>/attendance/", views.game_attendance, name="game_attendance"),
     path("calendar/", views.games_calendar, name="games_calendar"),
     path("profile/notifications/", views.notification_settings, name="notification_settings"),
     path("profile/telegram/connect/", views.telegram_connect, name="telegram_connect"),
