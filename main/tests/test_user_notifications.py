@@ -36,9 +36,9 @@ def make_user(email=True, language='ru', chat_id=None, **profile_fields):
 
 def make_game(days=10, **extra):
     extra.setdefault('max_players', 20)
+    extra.setdefault('name', 'Операция Шторм')  # game names are unique
     return AirsoftGame.objects.create(
-        name='Операция Шторм', date=timezone.localdate() + timedelta(days=days),
-        location='Лес', **extra,
+        date=timezone.localdate() + timedelta(days=days), location='Лес', **extra
     )
 
 
@@ -284,7 +284,7 @@ def test_reminders_go_to_confirmed_players_once():
     register(game, confirmed)
     register(game, waiting)  # goes to the waiting list
     register(game, no, status='no')
-    other_day = make_game(days=5)
+    other_day = make_game(days=5, name='Другая игра')
     register(other_day, make_user())
     mail.outbox.clear()
 
