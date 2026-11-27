@@ -137,6 +137,59 @@
   </div>
 </div>
 
+<!-- Статистика игрока -->
+<div class="row g-3 mb-4" id="player-stats">
+  <div class="col-6 col-md-3">
+    <div class="form-section text-center h-100">
+      <div class="display-6">{{ stats.played }}</div>
+      <div class="text-muted small">{% translate "Игр сыграно" %}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="form-section text-center h-100">
+      <div class="display-6">{% if stats.attendance_rate is None %}—{% else %}{{ stats.attendance_rate }}%{% endif %}</div>
+      <div class="text-muted small">{% translate "Посещаемость" %}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="form-section text-center h-100">
+      <div class="display-6">{{ stats.upcoming }}</div>
+      <div class="text-muted small">{% translate "Предстоящих игр" %}</div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="form-section text-center h-100">
+      <div class="display-6">{{ stats.missed }}</div>
+      <div class="text-muted small">{% translate "Пропущено" %}</div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="form-section">
+      <h5 class="mb-2"><i class="bi bi-award me-2"></i>{% translate "Достижения" %}</h5>
+      {% if stats.badges %}
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          {% for badge in stats.badges %}
+            <span class="badge bg-light text-dark border" style="font-size: 15px; padding: 8px 12px;"
+                  title="{% blocktranslate with num=badge.games %}{{ num }} игр{% endblocktranslate %}">{{ badge.icon }} {{ badge.title }}</span>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-muted mb-2">{% translate "Пока нет достижений: сыграйте первую игру!" %}</p>
+      {% endif %}
+      {% if stats.next_badge %}
+        <small class="text-muted">
+          {% blocktranslate with icon=stats.next_badge.icon title=stats.next_badge.title left=stats.next_badge.left %}До значка {{ icon }} {{ title }}: игр осталось {{ left }}{% endblocktranslate %}
+        </small>
+      {% endif %}
+      {% if stats.first_game %}
+        <div class="small text-muted mt-1">
+          {% blocktranslate with first=stats.first_game|date:"d.m.Y" last=stats.last_game|date:"d.m.Y" %}Первая игра: {{ first }}, последняя: {{ last }}{% endblocktranslate %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
 <div class="row">
   <!-- Редактирование профиля -->
   <div class="col-lg-5 mb-4">

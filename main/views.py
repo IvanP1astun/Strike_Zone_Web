@@ -25,6 +25,7 @@ from django.views.decorators.http import require_safe
 
 from . import telegram_bot, user_notifications
 from .ics import build_calendar
+from .stats import player_stats
 from .models import (
     News,
     Catalog,
@@ -386,6 +387,10 @@ def game_detail(request, game_id):
             "unknown_count": unknown_count,
             "waitlist_count": waitlist_count,
             "total_count": game.registrations.count(),
+            "can_mark_attendance": (
+                request.user.has_perm("main.can_add_game")
+                and game.date <= timezone.localdate()
+            ),
             "status_filter": status_filter,
             "search_query": search_query,
         },
@@ -445,6 +450,7 @@ def profile(request):
             "user_registrations": user_registrations,
             "upcoming_registrations": upcoming_registrations,
             "past_registrations": past_registrations,
+            "stats": player_stats(user),
             "notification_form": NotificationSettingsForm(instance=profile),
             "telegram_bot_username": settings.TELEGRAM_BOT_USERNAME,
         },
@@ -654,3 +660,48 @@ def games_ics_feed(request):
         is_active=True, date__gte=timezone.localdate()
     ).order_by("date", "name")
     return _ics_response(request, games)
+
+
+# =============================================
+# ПРИСУТСТВИЕ НА ИГРЕ
+# =============================================
+
+ATTENDANCE_VALUES = {"1": True, "0": False, "": None}
+
+
+@login_required
+@permission_required("main.can_add_game", raise_exception=True)
+def game_attendance(request, game_id):
+    """Организатор отмечает, кто пришёл на игру (с дня игры и позже)."""
+    game = get_object_or_404(AirsoftGame, id=game_id)
+    if game.date > timezone.localdate():
+        messages.error(request, _("Отметить присутствие можно в день игры или позже."))
+        return redirect("game_detail", game_id=game.id)
+
+    registrations = list(
+        game.confirmed_registrations().order_by("last_name", "first_name")
+    )
+    if request.method == "POST":
+        for registration in registrations:
+            value = request.POST.get("attended_%s" % registration.id)
+            if value not in ATTENDANCE_VALUES:
+                continue  # missing or invalid: leave the mark as it is
+            new_mark = ATTENDANCE_VALUES[value]
+            if new_mark != registration.attended:
+                # update(): no need to run the registration save() logic
+                GameRegistration.objects.filter(pk=registration.pk).update(
+                    attended=new_mark
+                )
+        messages.success(request, _("Присутствие сохранено."))
+        return redirect("game_attendance", game_id=game.id)
+
+    return render(
+        request,
+        "catalog/game_attendance.html",
+        {
+            "game": game,
+            "registrations": registrations,
+            "came": sum(1 for r in registrations if r.attended is True),
+            "total": len(registrations),
+        },
+    )

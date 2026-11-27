@@ -346,6 +346,9 @@ msgstr "任意項目"
 msgid "Есть автомобиль"
 msgstr "自家用車あり"
 
+msgid "Присутствовал"
+msgstr "出席"
+
 msgid "В листе ожидания"
 msgstr "キャンセル待ち"
 
@@ -369,6 +372,18 @@ msgstr "その他"
 
 msgid "Нейлон"
 msgstr "ナイロン"
+
+msgid "Новичок"
+msgstr "ルーキー"
+
+msgid "Боец"
+msgstr "ファイター"
+
+msgid "Ветеран"
+msgstr "ベテラン"
+
+msgid "Легенда"
+msgstr "レジェンド"
 
 msgid "Уведомления в Telegram отключены."
 msgstr "Telegram 通知をオフにしました。"
@@ -421,6 +436,36 @@ msgstr "%(sections_count)s セクション、全 %(total)s 点"
 msgid "%(num)s позиций"
 msgstr "%(num)s 点"
 
+msgid "Присутствие на игре"
+msgstr "ゲームの出欠"
+
+msgid "Присутствие"
+msgstr "出欠"
+
+msgid "Не отмечено"
+msgstr "未記録"
+
+msgid "✅ Пришёл"
+msgstr "✅ 出席"
+
+msgid "❌ Не пришёл"
+msgstr "❌ 欠席"
+
+msgid "Сохранить"
+msgstr "保存"
+
+msgid "Отметить всех как пришедших"
+msgstr "全員を出席にする"
+
+msgid "Назад к игре"
+msgstr "ゲームに戻る"
+
+msgid "Нет подтверждённых участников."
+msgstr "確定した参加者はいません。"
+
+msgid "Пришли: %(came)s из %(total)s"
+msgstr "出席：%(total)s 人中 %(came)s 人"
+
 msgid "Создание новой игры"
 msgstr "新しいゲームを作成"
 
@@ -429,6 +474,9 @@ msgstr "ゲームを作成"
 
 msgid "Отмена"
 msgstr "キャンセル"
+
+msgid "Отметить присутствие"
+msgstr "出欠を記録"
 
 msgid "✅ Приедут"
 msgstr "✅ 参加"
@@ -625,9 +673,6 @@ msgstr "ニュース一覧"
 msgid "Опубликовать сразу"
 msgstr "すぐに公開する"
 
-msgid "Сохранить"
-msgstr "保存"
-
 msgid "Наши правила"
 msgstr "私たちのルール"
 
@@ -660,6 +705,24 @@ msgstr "あなたの大切な思いは秘密にします。情報は自分で選
 
 msgid "Присоединился:"
 msgstr "登録日："
+
+msgid "Игр сыграно"
+msgstr "参加ゲーム数"
+
+msgid "Посещаемость"
+msgstr "出席率"
+
+msgid "Предстоящих игр"
+msgstr "今後のゲーム"
+
+msgid "Пропущено"
+msgstr "欠席"
+
+msgid "Достижения"
+msgstr "実績"
+
+msgid "Пока нет достижений: сыграйте первую игру!"
+msgstr "まだ実績はありません。最初のゲームに参加しましょう！"
 
 msgid "Редактировать профиль"
 msgstr "プロフィールを編集"
@@ -714,6 +777,15 @@ msgstr "ゲームを探して参加しましょう！"
 
 msgid "Посмотреть игры"
 msgstr "ゲームを見る"
+
+msgid "%(num)s игр"
+msgstr "%(num)s ゲーム"
+
+msgid "До значка %(icon)s %(title)s: игр осталось %(left)s"
+msgstr "バッジ %(icon)s %(title)s まであと %(left)s ゲーム"
+
+msgid "Первая игра: %(first)s, последняя: %(last)s"
+msgstr "最初のゲーム：%(first)s、最新：%(last)s"
 
 msgid "Вы вышли из системы!"
 msgstr "ログアウトしました！"
@@ -855,6 +927,12 @@ msgstr "通知設定を保存できませんでした。"
 
 msgid "Создание игры"
 msgstr "ゲームを作成"
+
+msgid "Отметить присутствие можно в день игры или позже."
+msgstr "出欠はゲーム当日以降に記録できます。"
+
+msgid "Присутствие сохранено."
+msgstr "出欠を保存しました。"
 
 msgid "Регистрация успешно завершена!"
 msgstr "登録が完了しました！"
