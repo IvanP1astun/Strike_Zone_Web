@@ -39,6 +39,30 @@ LOGOUT_URL = 'logout'
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', '')
 TELEGRAM_CHAT_ID = os.getenv('TELEGRAM_CHAT_ID', '')
 
+# Public address of the site (https://example.com): used for links in
+# notifications and for the Telegram webhook. Leave empty to omit links.
+SITE_URL = os.getenv('SITE_URL', '').rstrip('/')
+
+# Player notifications in Telegram: the bot username (without @) is used for the
+# "connect Telegram" link, the secret protects the webhook endpoint.
+TELEGRAM_BOT_USERNAME = os.getenv('TELEGRAM_BOT_USERNAME', '').lstrip('@')
+TELEGRAM_WEBHOOK_SECRET = os.getenv('TELEGRAM_WEBHOOK_SECRET', '')
+
+# Email notifications. Without EMAIL_HOST messages are only written to the log
+# (console backend), so nothing breaks when SMTP is not configured.
+EMAIL_HOST = os.getenv('EMAIL_HOST', '')
+if EMAIL_HOST:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+    EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+    EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+    EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+    EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', 'False') == 'True'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_TIMEOUT = 10
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'StrikeZone <noreply@localhost>')
+
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases

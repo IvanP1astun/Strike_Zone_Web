@@ -1,5 +1,8 @@
 import calendar as calendar_module
+import hmac
+import json
 import logging
+import secrets
 from datetime import date, timedelta
 
 from django.shortcuts import get_object_or_404, render, redirect
@@ -12,11 +15,15 @@ from django.views.generic import ListView, CreateView
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.translation import gettext as _
-from django.db import connection, models
-from django.http import HttpResponse, JsonResponse
+from django.conf import settings
+from django.db import connection, models, transaction
+from django.http import Http404, HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_safe
 
+from . import telegram_bot, user_notifications
 from .ics import build_calendar
 from .models import (
     News,
@@ -36,6 +43,7 @@ from .forms import (
     GameRegistrationEditForm,
     CustomUserCreationForm,
     CustomAuthenticationForm,
+    NotificationSettingsForm,
     ProfileForm,
     GameCreateForm,
 )
@@ -323,11 +331,17 @@ def game_detail(request, game_id):
                     user_registration.user = request.user
                     user_registration.save()
 
+    previous_status = user_registration.participation_status if user_registration else None
+
     if request.method == "POST":
         if user_registration:
             form = GameRegistrationEditForm(request.POST, instance=user_registration)
             if form.is_valid():
                 registration = form.save()
+                if registration.participation_status != previous_status:
+                    transaction.on_commit(
+                        lambda: user_notifications.notify_registration(registration)
+                    )
                 if registration.is_waitlisted:
                     messages.warning(request, _waitlist_message(registration))
                 else:
@@ -341,6 +355,9 @@ def game_detail(request, game_id):
                 if request.user.is_authenticated:
                     registration.user = request.user
                 registration.save()
+                transaction.on_commit(
+                    lambda: user_notifications.notify_registration(registration)
+                )
                 if registration.is_waitlisted:
                     messages.warning(request, _waitlist_message(registration))
                 else:
@@ -428,8 +445,76 @@ def profile(request):
             "user_registrations": user_registrations,
             "upcoming_registrations": upcoming_registrations,
             "past_registrations": past_registrations,
+            "notification_form": NotificationSettingsForm(instance=profile),
+            "telegram_bot_username": settings.TELEGRAM_BOT_USERNAME,
         },
     )
+
+
+# =============================================
+# УВЕДОМЛЕНИЯ
+# =============================================
+
+@login_required
+@require_POST
+def notification_settings(request):
+    """Сохранить настройки уведомлений (email / Telegram / язык)."""
+    profile, _created = Profile.objects.get_or_create(user=request.user)
+    form = NotificationSettingsForm(request.POST, instance=profile)
+    if form.is_valid():
+        form.save()
+        messages.success(request, _("Настройки уведомлений сохранены."))
+    else:
+        messages.error(request, _("Не удалось сохранить настройки уведомлений."))
+    return redirect("profile")
+
+
+@login_required
+@require_POST
+def telegram_connect(request):
+    """Создать одноразовый код привязки Telegram (ссылка на бота покажется в профиле)."""
+    profile, _created = Profile.objects.get_or_create(user=request.user)
+    if not settings.TELEGRAM_BOT_USERNAME:
+        messages.error(request, _("Уведомления в Telegram пока не настроены на сайте."))
+    else:
+        profile.telegram_link_token = secrets.token_urlsafe(16)
+        profile.save(update_fields=["telegram_link_token", "updated_at"])
+    return redirect("profile")
+
+
+@login_required
+@require_POST
+def telegram_disconnect(request):
+    """Отвязать Telegram."""
+    profile, _created = Profile.objects.get_or_create(user=request.user)
+    profile.telegram_chat_id = None
+    profile.telegram_link_token = ""
+    profile.save(update_fields=["telegram_chat_id", "telegram_link_token", "updated_at"])
+    messages.success(request, _("Telegram отключён."))
+    return redirect("profile")
+
+
+@csrf_exempt
+@require_POST
+def telegram_webhook(request):
+    """Webhook Telegram-бота. Защищён секретным заголовком, который Telegram
+    присылает, если секрет передан в setWebhook (команда set_telegram_webhook)."""
+    secret = settings.TELEGRAM_WEBHOOK_SECRET
+    if not secret:
+        raise Http404
+    received = request.headers.get("X-Telegram-Bot-Api-Secret-Token", "")
+    if not hmac.compare_digest(received.encode(), secret.encode()):
+        return HttpResponse(status=403)
+    try:
+        update = json.loads(request.body.decode("utf-8"))
+    except (ValueError, UnicodeDecodeError):
+        return HttpResponse(status=400)
+    try:
+        telegram_bot.handle_update(update)
+    except Exception:
+        # always answer 200, otherwise Telegram keeps re-sending the update
+        logger.exception("Telegram webhook failed")
+    return HttpResponse("ok")
 
 
 @login_required
