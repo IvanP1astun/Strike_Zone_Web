@@ -91,6 +91,9 @@ msgstr "Callsign"
 msgid "О себе"
 msgstr "About me"
 
+msgid "Язык уведомлений"
+msgstr "Notification language"
+
 msgid "Дата игры не может быть в прошлом!"
 msgstr "The game date cannot be in the past!"
 
@@ -232,6 +235,12 @@ msgstr "A short bio"
 msgid "Роль"
 msgstr "Role"
 
+msgid "Уведомления на email"
+msgstr "Email notifications"
+
+msgid "Уведомления в Telegram"
+msgstr "Telegram notifications"
+
 msgid "Профиль %(username)s"
 msgstr "Profile of %(username)s"
 
@@ -310,6 +319,9 @@ msgstr "Registered players"
 msgid "Активна"
 msgstr "Active"
 
+msgid "Напоминание отправлено"
+msgstr "Reminder sent"
+
 msgid "Да, приеду"
 msgstr "Yes, I will come"
 
@@ -357,6 +369,18 @@ msgstr "Other"
 
 msgid "Нейлон"
 msgstr "Nylon"
+
+msgid "Уведомления в Telegram отключены."
+msgstr "Telegram notifications are turned off."
+
+msgid "Ссылка недействительна или устарела. Создайте новую в личном кабинете."
+msgstr "The link is invalid or has expired. Create a new one in your account."
+
+msgid "✅ Telegram подключён к аккаунту %(username)s. Отключить уведомления можно командой /stop."
+msgstr "✅ Telegram is connected to the account %(username)s. You can turn notifications off with the /stop command."
+
+msgid "Привет! Чтобы подключить уведомления, нажмите «Подключить Telegram» в личном кабинете на сайте."
+msgstr "Hi! To turn on notifications, press \"Connect Telegram\" in your account on the website."
 
 msgid "Закрыть"
 msgstr "Close"
@@ -646,6 +670,36 @@ msgstr "Current avatar:"
 msgid "Сохранить изменения"
 msgstr "Save changes"
 
+msgid "Уведомления"
+msgstr "Notifications"
+
+msgid "Сообщения о регистрации, освободившемся месте, изменении или отмене игры и напоминание за день до игры."
+msgstr "Messages about registration, a freed place, a changed or cancelled game and a reminder the day before the game."
+
+msgid "email не указан"
+msgstr "no email set"
+
+msgid "Сохранить настройки уведомлений"
+msgstr "Save notification settings"
+
+msgid "Telegram подключён."
+msgstr "Telegram is connected."
+
+msgid "Отключить Telegram"
+msgstr "Disconnect Telegram"
+
+msgid "Уведомления в Telegram пока не настроены на сайте."
+msgstr "Telegram notifications are not set up on the site yet."
+
+msgid "Откройте бота по ссылке и нажмите Start. Ссылка одноразовая."
+msgstr "Open the bot via the link and press Start. The link works only once."
+
+msgid "Открыть бота в Telegram"
+msgstr "Open the bot in Telegram"
+
+msgid "Подключить Telegram"
+msgstr "Connect Telegram"
+
 msgid "Предстоящие"
 msgstr "Upcoming"
 
@@ -712,11 +766,62 @@ msgstr "Send email"
 msgid "Уже есть аккаунт?"
 msgstr "Already have an account?"
 
+msgid "Дата: %(date)s"
+msgstr "Date: %(date)s"
+
+msgid "Место: %(location)s"
+msgstr "Place: %(location)s"
+
+msgid "Для вас освободилось место: %(game)s"
+msgstr "A place has become free for you: %(game)s"
+
+msgid "Напоминание: скоро игра «%(game)s»"
+msgstr "Reminder: the game \"%(game)s\" is coming soon"
+
+msgid "Вы в листе ожидания: %(game)s"
+msgstr "You are on the waiting list: %(game)s"
+
+msgid "Вы переведены из листа ожидания в список участников."
+msgstr "You have been moved from the waiting list to the participants."
+
+msgid "Изменения в игре: %(game)s"
+msgstr "Changes in the game: %(game)s"
+
+msgid "Игра отменена: %(game)s"
+msgstr "Game cancelled: %(game)s"
+
+msgid "Не забудьте про игру!"
+msgstr "Don't forget about the game!"
+
+msgid "Если место освободится, вы получите его автоматически."
+msgstr "If a place becomes free, you will get it automatically."
+
+msgid "Вы зарегистрированы: %(game)s"
+msgstr "You are registered: %(game)s"
+
+msgid "Новая дата: %(new)s (раньше: %(old)s)"
+msgstr "New date: %(new)s (was: %(old)s)"
+
+msgid "Новое место: %(new)s (раньше: %(old)s)"
+msgstr "New place: %(new)s (was: %(old)s)"
+
+msgid "Игра, назначенная на %(date)s, отменена."
+msgstr "The game scheduled for %(date)s has been cancelled."
+
+msgid "Свободных мест нет, ваша позиция в очереди — %(position)s."
+msgstr "There are no free places, your position in the queue is %(position)s."
+
+msgid "Ваше место на игре закреплено."
+msgstr "Your place in the game is secured."
+
 msgid "⏳ Свободных мест нет: вы в листе ожидания, ваша позиция — %(position)s. Если место освободится, вы получите его автоматически."
 msgstr "⏳ There are no free places: you are on the waiting list, your position is %(position)s. If a place becomes free, you will get it automatically."
 
 msgid "Вы отменили регистрацию на игру"
 msgstr "You have cancelled your game registration"
+
+msgid "Telegram отключён."
+msgstr "Telegram has been disconnected."
 
 msgid "Расписание, сценарии, регистрация на игры"
 msgstr "Schedule, scenarios, game registration"
@@ -741,6 +846,12 @@ msgstr "Airsoft equipment"
 
 msgid "Хронографы, зарядки, аккумуляторы"
 msgstr "Chronographs, chargers, batteries"
+
+msgid "Настройки уведомлений сохранены."
+msgstr "Notification settings saved."
+
+msgid "Не удалось сохранить настройки уведомлений."
+msgstr "Could not save the notification settings."
 
 msgid "Создание игры"
 msgstr "Create a game"

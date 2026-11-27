@@ -13,6 +13,7 @@ Test deployment: <https://szw.tailf3363e.ts.net/>
 - **Game registration.** Players register for a game and set their participation status (yes / no / unknown) and can change it at any time or cancel.
 - **Capacity and waiting list.** Only players who answered "yes" take a place. When the game is full, new "yes" registrations join a waiting list and are promoted automatically (in order) when someone cancels or the limit is raised.
 - **Game calendar.** `/calendar/` shows games by month; every game can be added to Google/Apple/Outlook calendar as an `.ics` file, and `/calendar.ics` is a subscribable feed of upcoming games.
+- **Notifications.** Email and Telegram messages to registered players: registration or waiting-list confirmation, a place freed from the waiting list, a changed date/place, a cancelled game and a reminder the day before. Every player chooses the channels and the language in the profile.
 - **Participant list.** Per-game list with a status filter and search by first name, last name, callsign or phone number.
 - **Player profiles.** Avatar, callsign and contact details.
 - **Roles.** Regular players, a `moderators` group (created by a management command) and staff.
@@ -91,6 +92,32 @@ All settings come from environment variables (a `.env` file is loaded automatica
 | `DB_HOST`, `DB_PORT` | PostgreSQL host and port (Compose sets `db:5432`). | `localhost`, `5432` |
 | `LOG_DIR` | Directory for `django.log`. | `./logs` |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | Enable Telegram notifications. | empty (disabled) |
+
+## Notifications (email and Telegram)
+
+Only players with a site account can be notified. Everything is optional: without settings nothing is sent
+(email is then only written to the log).
+
+**Email.** Set `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`
+and `DEFAULT_FROM_EMAIL` in `.env`.
+
+**Telegram for players.**
+1. Create a bot in @BotFather and set `TELEGRAM_BOT_TOKEN` (the same bot may be used for admin messages),
+   `TELEGRAM_BOT_USERNAME` (without `@`), `TELEGRAM_WEBHOOK_SECRET` (any long random string) and
+   `SITE_URL` (public `https://` address of the site).
+2. After deploy register the webhook once: `docker compose exec web python manage.py set_telegram_webhook`
+   (`--delete` removes it). The site must be reachable over HTTPS.
+3. A player opens the profile, presses "Connect Telegram", follows the one-time link and presses Start.
+   `/stop` in the chat disconnects.
+
+**Reminders** (the day before a game) are sent by a command that you run once a day, for example from cron
+on the server:
+
+```cron
+0 10 * * * cd /path/to/Strike_Zone_Web && docker compose exec -T web python manage.py send_game_reminders
+```
+
+Each game is reminded only once, running the command more often is safe.
 
 ## Translations (i18n)
 

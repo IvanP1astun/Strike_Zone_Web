@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
 from django.db.models import Q, UniqueConstraint
-from django.db.models.signals import post_delete, post_save, pre_save
+from django.db.models.signals import post_delete, post_save, pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -9,6 +9,7 @@ from PIL import Image
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 
+from . import user_notifications
 from .constants import MAX_NAME_LENGTH
 
 User = get_user_model()
@@ -89,6 +90,23 @@ class Profile(models.Model):
         choices=ROLE_CHOICES,
         default='player',
         verbose_name=_('Роль')
+    )
+
+    # Уведомления
+    notify_email = models.BooleanField(
+        default=True, verbose_name=_("Уведомления на email")
+    )
+    notify_telegram = models.BooleanField(
+        default=True, verbose_name=_("Уведомления в Telegram")
+    )
+    notification_language = models.CharField(
+        max_length=8, default="ru", verbose_name=_("Язык уведомлений")
+    )
+    telegram_chat_id = models.BigIntegerField(
+        null=True, blank=True, unique=True, verbose_name="Telegram chat ID"
+    )
+    telegram_link_token = models.CharField(
+        max_length=64, blank=True, default="", verbose_name="Telegram link token"
     )
 
     created_at = models.DateTimeField(auto_now_add=True, verbose_name=_("Дата создания"))
@@ -396,6 +414,9 @@ class AirsoftGame(models.Model):
         upload_to="games/", verbose_name=_("Изображение"), blank=True, null=True
     )
     is_active = models.BooleanField(default=True, verbose_name=_("Активна"))
+    reminder_sent_at = models.DateTimeField(
+        null=True, blank=True, verbose_name=_("Напоминание отправлено")
+    )
 
     class Meta:
         verbose_name = _("Страйкбольная игра")
@@ -452,8 +473,23 @@ class AirsoftGame(models.Model):
 
 @receiver(pre_save, sender=AirsoftGame)
 def game_pre_save(sender, instance, **kwargs):
-    """Перед сохранением проставляет актуальный статус игры."""
+    """Перед сохранением проставляет актуальный статус игры
+    и запоминает, изменились ли дата или место (для уведомлений)."""
     instance.update_status()
+    instance._notify_changes = {}
+    if instance.pk:
+        old = (
+            AirsoftGame.objects.filter(pk=instance.pk)
+            .values("date", "location")
+            .first()
+        )
+        if old:
+            if old["date"] != instance.date:
+                instance._notify_changes["date"] = old["date"]
+                # the game moved: the reminder has to be sent again
+                instance.reminder_sent_at = None
+            if old["location"] != instance.location:
+                instance._notify_changes["location"] = old["location"]
 
 
 class GameRegistration(models.Model):
@@ -595,6 +631,14 @@ class GameRegistration(models.Model):
         return False
 
 
+def _notify_promoted(promoted):
+    """Tell people who just got a place from the waiting list (after commit)."""
+    if promoted:
+        transaction.on_commit(
+            lambda: [user_notifications.notify_promoted(r) for r in promoted]
+        )
+
+
 @receiver(post_save, sender=GameRegistration)
 @receiver(post_delete, sender=GameRegistration)
 def registration_changed(sender, instance, **kwargs):
@@ -603,16 +647,34 @@ def registration_changed(sender, instance, **kwargs):
         return
     game = AirsoftGame.objects.filter(pk=instance.game_id).first()
     if game is not None:
-        game.rebalance()
+        _notify_promoted(game.rebalance())
 
 
 @receiver(post_save, sender=AirsoftGame)
-def game_changed(sender, instance, **kwargs):
-    """max_players may have been raised (admin): let waiting players in."""
+def game_changed(sender, instance, created=False, **kwargs):
+    """max_players may have been raised, the date or place may have changed."""
     if kwargs.get("raw"):
         return
-    if instance.promote_from_waitlist():
+    promoted = instance.promote_from_waitlist()
+    if promoted:
         instance.sync_registered_players()
+        _notify_promoted(promoted)
+    changes = getattr(instance, "_notify_changes", None)
+    if changes and not created:
+        transaction.on_commit(
+            lambda: user_notifications.notify_game_changed(instance, changes)
+        )
+
+
+@receiver(pre_delete, sender=AirsoftGame)
+def game_deleted(sender, instance, **kwargs):
+    """Deleting a game cancels it: warn the people who were going to come."""
+    recipients = user_notifications.recipients_of(instance)
+    name, game_date = instance.name, instance.date
+    if recipients:
+        transaction.on_commit(
+            lambda: user_notifications.notify_game_cancelled(name, game_date, recipients)
+        )
 
 
 class Favorite(models.Model):

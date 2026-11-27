@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django import forms
@@ -404,3 +405,21 @@ class ProfileForm(forms.ModelForm):
             profile.save()
 
         return profile
+
+
+class NotificationSettingsForm(forms.ModelForm):
+    """Настройки уведомлений в личном кабинете"""
+
+    notification_language = forms.ChoiceField(
+        label=_("Язык уведомлений"),
+        choices=settings.LANGUAGES,
+        widget=forms.Select(attrs={"class": "form-select"}),
+    )
+
+    class Meta:
+        model = Profile
+        fields = ["notify_email", "notify_telegram", "notification_language"]
+        widgets = {
+            "notify_email": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "notify_telegram": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
